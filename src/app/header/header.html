@@ -1,0 +1,43 @@
+<mat-sidenav-container class="nav-shell">
+    <mat-sidenav #drawer class="drawer" mode="over" [opened]="isMenuOpen" (closedStart)="closeMenu()">
+        <div class="drawer-title">Navigate</div>
+        <a routerLink="/" (click)="closeMenu()">Home</a>
+        <a routerLink="/aboutus" (click)="closeMenu()">About</a>
+        <a routerLink="/practice" (click)="closeMenu()">Practice</a>
+        <a routerLink="/contact" (click)="closeMenu()">Contact</a>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+        <mat-toolbar class="topbar">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-2" style="text-align:left;">
+                        <div class="logo">
+                            <a href="index.html">
+                                <img src="assets/img/logo.png" alt="Logo" style="width: 100px; height: auto;">
+                            </a>
+
+                        </div>
+
+                    </div>                  
+                  
+                </div>
+            </div>
+
+            <nav class="desktop-nav">
+                <a routerLink="/">Home</a>
+                <a routerLink="/aboutus">About</a>
+                <a routerLink="/practice">Practice</a>
+                <a routerLink="/attorney">Attorney</a>
+                <a routerLink="/casestudy">Case Study</a>
+                <a routerLink="/pages">Pages</a>
+                <a routerLink="/contact">Contact</a>
+            </nav>
+
+            <button class="menu-toggle" type="button" mat-icon-button aria-label="Toggle navigation"
+                (click)="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </mat-toolbar>
+    </mat-sidenav-content>
+</mat-sidenav-container>
