@@ -6,7 +6,7 @@ import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: 'app-root',
-  imports: [Header, Main, RouterOutlet],
+  imports: [Header,  RouterOutlet],
   templateUrl: './app.html',
   styles:  `
     .top-bar {
@@ -54,6 +54,17 @@ import { RouterOutlet } from "@angular/router";
     .top-bar .top-bar-right {
       display: flex;
       align-items: center;
+    }
+
+    @media (max-width: 575.98px) {
+     .top-bar .text h2 {
+      color: #ffffff;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+      font-size: 15px;
+      margin: 0;
+    }
     }
 
     .top-bar-right .text h2 {

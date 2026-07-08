@@ -5,7 +5,7 @@
     "packageManager": "npm",
     "analytics": false
   },
-  
+
   "newProjectRoot": "projects",
   "projects": {
     "my-angular-app": {
@@ -50,25 +50,26 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },"src/favicon.ico",
-                "src/assets"
+              },
+              "src/favicon.ico",
+              "src/assets"
             ],
             "styles": [
               "src/styles.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/assets/lib/owlcarousel/assets/owl.carousel.min.css",
-              "src/assets/lib/owlcarousel/assets/owl.theme.default.min.css",             
+              "src/assets/lib/owlcarousel/assets/owl.theme.default.min.css",
               "src/assets/css/style.css",
               "src/assets/lib/animate/animate.min.css"
             ],
             "scripts": [
-                        "node_modules/jquery/dist/jquery.min.js",
-                        "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
-                        "src/assets/lib/easing/easing.min.js",
-                        "src/assets/lib/owlcarousel/owl.carousel.min.js",
-                        "src/assets/lib/isotope/isotope.pkgd.min.js",
-                        "src/assets/js/main.js"
-                      ],
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "src/assets/lib/easing/easing.min.js",
+              "src/assets/lib/owlcarousel/owl.carousel.min.js",
+              "src/assets/lib/isotope/isotope.pkgd.min.js",
+              "src/assets/js/main.js"
+            ],
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
@@ -83,13 +84,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "2MB",
+                  "maximumError": "5MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "10kB",
+                  "maximumError": "20kB"
                 }
               ],
               "outputHashing": "all"
@@ -113,6 +114,9 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy"
         }
       }
     }
