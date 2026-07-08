@@ -252,6 +252,15 @@ a:focus {
         font-size: 15px;
         text-transform: uppercase;
     }
+
+    .top-bar .text h2 {
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 20px;
+    margin: 0;
+}
 }
 
 @media (max-width: 991.98px) {   
@@ -281,7 +290,9 @@ a:focus {
 .carousel {
     position: relative;
     width: 100%;
-    height: calc(100vh - 170px);
+    height: clamp(420px, calc(100vh - 170px), 900px);
+    min-height: 420px;
+    max-height: 900px;
     margin: 0 auto;
     text-align: center;
     overflow: hidden;
@@ -291,7 +302,17 @@ a:focus {
 .carousel .carousel-item {
     position: relative;
     width: 100%;
-    height: auto;
+    height: 100%;
+}
+
+.carousel.carousel-fade .carousel-item {
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    backface-visibility: hidden;
+}
+
+.carousel.carousel-fade .carousel-item.active {
+    opacity: 1;
 }
 
 .carousel .carousel-item img {
@@ -353,40 +374,68 @@ a:focus {
     background: #aa9166;
 }
 
+@media (max-width: 991.98px) {
+    .carousel {
+        height: clamp(360px, calc(80vh - 120px), 700px);
+    }
+
+    .carousel .carousel-caption {
+        padding: 25px 18px;
+    }
+}
+
 @media (max-width: 767.98px) {
+    .carousel {
+        height: clamp(320px, calc(70vh - 100px), 620px);
+    }
+
+    .carousel .carousel-caption {
+        padding: 20px 16px;
+    }
+
     .carousel .carousel-caption h1 {
-        font-size: 40px;
+        font-size: 34px;
         font-weight: 700;
     }
     
     .carousel .carousel-caption p {
-        font-size: 20px;
+        font-size: 18px;
     }
     
     .carousel .carousel-caption .btn {
-        padding: 12px 30px;
-        font-size: 18px;
+        padding: 12px 28px;
+        font-size: 16px;
         font-weight: 500;
         letter-spacing: 0;
     }
 }
 
 @media (max-width: 575.98px) {
+    .carousel {
+        height: clamp(280px, 55vh, 500px);
+        min-height: 260px;
+    }
+
+    .carousel .carousel-caption {
+        padding: 16px 14px;
+    }
+
     .carousel .carousel-caption h1 {
-        font-size: 30px;
+        font-size: 28px;
         font-weight: 500;
     }
     
     .carousel .carousel-caption p {
-        font-size: 16px;
+        font-size: 14px;
     }
     
     .carousel .carousel-caption .btn {
-        padding: 10px 25px;
-        font-size: 16px;
+        padding: 10px 24px;
+        font-size: 14px;
         font-weight: 400;
         letter-spacing: 0;
     }
+    
 }
 
 .carousel .animated {
