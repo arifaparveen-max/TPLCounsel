@@ -1,0 +1,38 @@
+<div class="faqs">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5">
+        <div class="faqs-img">
+          <img src="assets/img/faqs.jpg" alt="Image">
+        </div>
+      </div>
+      <div class="col-md-7">
+        <div class="section-header">
+          <h2>Have A Questions?</h2>
+        </div>
+
+        <div class="faq-accordion">
+          <div class="card" *ngFor="let item of faqItems; let i = index">
+            <div class="card-header">
+              <button
+                type="button"
+                class="card-link"
+                [attr.aria-expanded]="item.isOpen"
+                (click)="toggleFaq(item.id)"
+              >
+                <span>{{ i + 1 }}</span> {{ item.question }}
+              </button>
+            </div>
+            <div class="faq-answer" *ngIf="item.isOpen">
+              <div class="card-body">
+                {{ item.answer }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <a class="btn" href="/contact">Ask more</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,82 @@
+.faq-accordion .card {
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 10px;
+  background: #fff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.faq-accordion .card-header {
+  background: #fff;
+  border: 0;
+  padding: 0;
+}
+
+.faq-accordion .card-link {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 18px 20px;
+  color: #000000;
+  font-weight: 600;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.faq-accordion .card-link:hover {
+  background-color: #f9f9f9;
+  color: #aa9166;
+}
+
+.faq-accordion .card-link span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 12px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 14px;
+  border: 1px solid #000000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.faq-accordion .faq-answer {
+  max-height: 220px;
+  overflow: hidden;
+  animation: faqFadeIn 0.3s ease-in-out;
+}
+
+.faq-accordion .card-body {
+  padding: 0 20px 20px 62px;
+  color: #999999;
+  line-height: 1.7;
+}
+
+.faq-accordion .card-link[aria-expanded='true'] {
+  color: #aa9166;
+  background-color: #fcf8f1;
+}
+
+.faq-accordion .card-link[aria-expanded='true'] span {
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #000000;
+}
+
+@keyframes faqFadeIn {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 220px;
+  }
+}
