@@ -1,0 +1,15 @@
+<div class="chat">
+
+    <button
+        (click)="startListening()">
+        🎤 Start Talking
+    </button>
+
+    <p>{{recognizedText}}</p>
+
+    <button
+        (click)="recognizedText = ''">
+        Send
+    </button>
+
+</div>
