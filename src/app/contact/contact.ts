@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { finalize } from 'rxjs/operators';
 import { Footer } from "../footer/footer";
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-contact',
@@ -21,7 +23,7 @@ export class Contact {
 
   private apiUrl = 'https://employeesapi.runasp.net/api/Emails/send';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   submitForm(): void {
     // Reset messages
@@ -43,18 +45,23 @@ export class Contact {
       message: this.message
     };
 
-    this.http.post(this.apiUrl, emailData).subscribe({
-      next: (response: any) => {
+    this.http.post(this.apiUrl, emailData).pipe(
+      finalize(() => {
         this.isSubmitting = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: (response: any) => {
+        console.log('Zone:', NgZone.isInAngularZone());
         this.successMessage = 'Your message has been sent successfully!';
-        // Reset form
+        // Reset form fields
         this.clientName = '';
         this.clientEmail = '';
         this.subject = '';
         this.message = '';
+        this.cdr.detectChanges();
       },
       error: (error: any) => {
-        this.isSubmitting = false;
         this.errorMessage = 'Failed to send message. Please try again.';
         console.error('Error sending email:', error);
       }
