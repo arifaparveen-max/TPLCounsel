@@ -1,10 +1,20 @@
 <mat-sidenav-container class="nav-shell">
     <mat-sidenav #drawer class="drawer" mode="over" [opened]="isMenuOpen" (closedStart)="closeMenu()">
         <div class="drawer-title">Navigate</div>
-        <a routerLink="/" (click)="closeMenu()">Home</a>
-        <a routerLink="/aboutus" (click)="closeMenu()">About</a>
-        <a routerLink="/practice" (click)="closeMenu()">Practice</a>
-        <a routerLink="/contact" (click)="closeMenu()">Contact</a>
+        <a routerLink="/" routerLinkActive="active" (click)="closeMenu()">Home</a>
+        <a routerLink="/aboutus" routerLinkActive="active" (click)="closeMenu()">About</a>
+        <ng-container *ngIf="auth.isLoggedIn$ | async">
+          <button type="button" class="drawer-toggle" (click)="toggleAdminDrawer()">
+            Admin
+            <span [class.open]="isAdminDrawerOpen">▾</span>
+          </button>
+          <div class="drawer-submenu" [class.open]="isAdminDrawerOpen">
+              <a routerLink="/act-master" routerLinkActive="active" (click)="closeMenu()">Act Master</a>
+              <a routerLink="/act-details" routerLinkActive="active" (click)="closeMenu()">Act Details</a>
+              <a routerLink="/legal-category" routerLinkActive="active" (click)="closeMenu()">Legal Category</a>
+          </div>
+        </ng-container>
+        <a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">Contact</a>
     </mat-sidenav>
 
     <mat-sidenav-content>
@@ -25,13 +35,26 @@
             </div>
 
             <nav class="desktop-nav">
-                <a routerLink="/">Home</a>
-                <a routerLink="/aboutus">About</a>
-                <a routerLink="/practice">Practice</a>
-                <a routerLink="/attorney">Attorney</a>
-                <a routerLink="/casestudy">Case Study</a>
-                <a routerLink="/pages">Pages</a>
-                <a routerLink="/contact">Contact</a>
+                <a routerLink="/" routerLinkActive="active">Home</a>
+                <a routerLink="/aboutus" routerLinkActive="active">About</a>
+                <a routerLink="/practice" routerLinkActive="active">Practice</a>
+                <a routerLink="/attorney" routerLinkActive="active">Attorney</a>
+                <a routerLink="/casestudy" routerLinkActive="active">Case Study</a>
+                <ng-container *ngIf="auth.isLoggedIn$ | async">
+                  <div class="dropdown" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+                      <a routerLink="/pages" class="dropdown-toggle">Admin <span class="caret">▾</span></a>
+                      <div class="dropdown-menu">
+                          <a routerLink="/pages" routerLinkActive="active">Overview</a>
+                          <a routerLink="/act-master" routerLinkActive="active">Act Master</a>
+                          <a routerLink="/act-details" routerLinkActive="active">Act Details</a>
+                          <a routerLink="/legal-category" routerLinkActive="active">Legal Category</a>
+                      </div>
+                  </div>
+                </ng-container>
+                <a routerLink="/contact" routerLinkActive="active">Contact</a>
+                <ng-container *ngIf="auth.isLoggedIn$ | async">
+                  <span class="admin-badge">Admin</span>
+                </ng-container>
             </nav>
 
             <button class="menu-toggle" type="button" mat-icon-button aria-label="Toggle navigation"

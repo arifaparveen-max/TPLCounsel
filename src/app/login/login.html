@@ -1,0 +1,20 @@
+<div class="auth-page">
+  <div class="container">
+    <div class="section-header">
+      <h2>Welcome Back</h2>
+      <p>Login to continue and access your dashboard, appointments, and support.</p>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submitForm()">
+      <input type="text" placeholder="Email or Username" [(ngModel)]="email" name="email" required />
+      <input type="password" placeholder="Password" [(ngModel)]="password" name="password" required />
+      <div class="auth-cta">
+        <button class="btn" type="submit" [disabled]="isSubmitting">{{ isSubmitting ? 'Logging in...' : 'Login' }}</button>
+        <a routerLink="/register">Create account</a>
+      </div>
+      <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+      <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+    </form>
+  </div>
+</div>
+

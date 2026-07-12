@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-header',
-  imports: [MatSidenavModule, MatToolbarModule, MatButtonModule, MatListModule, MatDividerModule, RouterLink],
+  imports: [CommonModule, MatSidenavModule, MatToolbarModule, MatButtonModule, MatListModule, MatDividerModule, RouterLink, RouterLinkActive],
   templateUrl: './header.html',
   styles: `
     .nav-shell {
@@ -53,6 +55,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     .desktop-nav {
       display: flex;
       gap: 8px;
+      align-items: center;
     }
 
     .desktop-nav a {
@@ -67,6 +70,102 @@ import { MatToolbarModule } from '@angular/material/toolbar';
     .desktop-nav a.active {
       background: #aa9166;
       color: #121518;
+    }
+
+    .desktop-nav .dropdown {
+      position: relative;
+      display: inline-flex;
+      flex-direction: column;
+    }
+
+    .desktop-nav .dropdown-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: #ffffff;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .desktop-nav .dropdown-toggle:hover,
+    .desktop-nav .dropdown.open > .dropdown-toggle {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .desktop-nav .dropdown.open > .dropdown-toggle .caret {
+      transform: translateY(1px) rotate(180deg);
+    }
+
+    .desktop-nav .dropdown-menu {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      min-width: 180px;
+      display: flex;
+      flex-direction: column;
+      background: #121518;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 8px 0;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.26);
+      z-index: 1400;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(-16px);
+      transition: opacity 0.22s ease, transform 0.22s ease, visibility 0.22s ease;
+      pointer-events: none;
+    }
+
+    .desktop-nav .dropdown:hover .dropdown-menu,
+    .desktop-nav .dropdown:focus-within .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+      pointer-events: auto;
+    }
+
+    .desktop-nav .dropdown-menu {
+      z-index: 1400;
+    }
+
+    .desktop-nav .dropdown-menu a {
+      display: block;
+      padding: 10px 18px;
+      white-space: nowrap;
+      color: #f8f7f2;
+      background: transparent;
+    }
+    
+    .desktop-nav .dropdown-toggle .caret {
+      transform: translateY(1px);
+      transition: transform 0.25s ease;
+    }
+
+    .desktop-nav .dropdown:hover .dropdown-toggle .caret,
+    .desktop-nav .dropdown:focus-within .dropdown-toggle .caret {
+      transform: translateY(1px) rotate(180deg);
+    }
+
+    .desktop-nav .dropdown-menu a:hover {
+      background: rgba(170, 145, 102, 0.12);
+      color: #aa9166;
+    }
+
+    .admin-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 14px;
+      margin-left: 8px;
+      border-radius: 999px;
+      background: #aa9166;
+      color: #121518;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      border: 1px solid rgba(255, 255, 255, 0.16);
     }
 
     .menu-toggle {
@@ -84,6 +183,64 @@ import { MatToolbarModule } from '@angular/material/toolbar';
       height: auto;
       max-height: none;
       overflow: visible;
+    }
+
+    .drawer-submenu {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding-left: 20px;
+      margin-bottom: 12px;
+      transition: all 0.25s ease;
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+    }
+
+    .drawer-submenu.open {
+      display: flex;
+      max-height: 200px;
+      opacity: 1;
+    }
+
+    .drawer-submenu a,
+    .drawer-toggle {
+      padding-left: 12px;
+      color: rgba(248, 247, 242, 0.85);
+    }
+
+    .drawer-toggle {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      color: #f8f7f2;
+      text-align: left;
+      font-size: 0.95rem;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .drawer-toggle span {
+      margin-left: auto;
+      transition: transform 0.25s ease;
+    }
+
+    .drawer-toggle span.open {
+      transform: rotate(180deg);
+    }
+
+    .drawer-submenu a.active,
+    .drawer-toggle.active {
+      color: #aa9166;
+    }
+    
+    .desktop-nav .dropdown.active > a,
+    .desktop-nav a.active {
+      background: #aa9166;
+      color: #121518;
     }
 
     ::ng-deep .mat-drawer-backdrop {
@@ -175,12 +332,20 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 })
 export class Header {
   protected isMenuOpen = false;
+  protected isAdminDrawerOpen = false;
+
+  constructor(public auth: AuthService) {}
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;
   }
 
+  toggleAdminDrawer(): void {
+    this.isAdminDrawerOpen = !this.isAdminDrawerOpen;
+  }
+
   closeMenu(): void {
     this.isMenuOpen = false;
+    this.isAdminDrawerOpen = false;
   }
 }

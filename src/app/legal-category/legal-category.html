@@ -1,0 +1,88 @@
+<section class="page-shell">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card p-4">
+          <h3 class="mb-3">Add Legal Category</h3>
+          <p class="text-light-emphasis mb-4">Create a new legal category and send it to the API with the authenticated bearer token.</p>
+
+          <form (ngSubmit)="submitForm()" #categoryForm="ngForm" class="d-grid gap-3">
+            <div>
+              <label class="form-label">Category Name</label>
+              <input class="form-control" [(ngModel)]="categoryName" name="categoryName" required />
+            </div>
+
+            <div>
+              <label class="form-label">Alias</label>
+              <input class="form-control" [(ngModel)]="alias" name="alias" required />
+            </div>
+
+            <div>
+              <label class="form-label">Description</label>
+              <textarea class="form-control" rows="3" [(ngModel)]="description" name="description" required></textarea>
+            </div>
+
+            <div>
+              <label class="form-label">Icon Path</label>
+              <input class="form-control" [(ngModel)]="categoryIconPath" name="categoryIconPath" />
+            </div>
+
+            <div>
+              <label class="form-label">Icon Class</label>
+              <input class="form-control" [(ngModel)]="iconClass" name="iconClass" />
+            </div>
+
+            <button class="btn btn-gold" type="submit" [disabled]="isSubmitting">
+              {{ isSubmitting ? 'Saving...' : 'Save Category' }}
+            </button>
+          </form>
+
+          <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Legal Categories</h3>
+            <span class="badge bg-light text-dark">{{ categories.length }} items</span>
+          </div>
+
+          <div *ngIf="isLoading" class="text-light-emphasis">Loading categories...</div>
+
+          <div *ngIf="!isLoading && categories.length === 0" class="text-light-emphasis">No categories found.</div>
+
+          <div *ngIf="!isLoading && categories.length > 0" class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>Category Name</th>
+                  <th>Alias</th>
+                  <th>Description</th>
+                  <th>Icon Path</th>
+                  <th>Icon Class</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of categories">
+                  <td>{{ item.categoryName }}</td>
+                  <td>{{ item.alias }}</td>
+                  <td>{{ item.description }}</td>
+                  <td>{{ item.categoryIconPath || '—' }}</td>
+                  <td>{{ item.iconClass || '—' }}</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-danger" type="button" (click)="deleteCategory(item)" title="Delete category">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
