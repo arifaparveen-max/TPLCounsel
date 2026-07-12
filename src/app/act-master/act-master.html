@@ -1,11 +1,86 @@
-<div class="admin-panel">
-  <div class="section-header">
-    <h2>Act Master</h2>
-    <p>Manage the main act entries for the admin portal. Add, edit, or review act master records from here.</p>
-  </div>
+<section class="page-shell">
+  <div class="container py-4">
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card p-4">
+          <h3 class="mb-3">Add Act</h3>
+          <p class="text-light-emphasis mb-4">Create a new act entry and send it to the API using the selected legal category.</p>
 
-  <div class="panel-card">
-    <h3>Act Master Dashboard</h3>
-    <p>This page is reserved for the primary act administration screens. You can wire in listing, creation, and update workflows for your act master records.</p>
+          <form (ngSubmit)="submitForm()" #actForm="ngForm" class="d-grid gap-3">
+            <div>
+              <label class="form-label">Act Name</label>
+              <input class="form-control" [(ngModel)]="actName" name="actName" required />
+            </div>
+
+            <div>
+              <label class="form-label">Alias</label>
+              <input class="form-control" [(ngModel)]="alias" name="alias" required />
+            </div>
+
+            <div>
+              <label class="form-label">Date of Effect</label>
+              <input class="form-control" type="date" [(ngModel)]="dateOfEffect" name="dateOfEffect" required />
+            </div>
+
+            <div>
+              <label class="form-label">Act Details</label>
+              <textarea class="form-control" rows="3" [(ngModel)]="actDetails" name="actDetails" required></textarea>
+            </div>
+
+            <div>
+              <label class="form-label">Legal Category</label>
+              <select class="form-select" [(ngModel)]="legalCategoryId" name="legalCategoryId" required>
+                <option value="">Select legal category</option>
+                <option *ngFor="let category of legalCategories" [value]="category.id ?? category.categoryId">
+                  {{ category.categoryName }}
+                </option>
+              </select>
+            </div>
+
+            <button class="btn btn-gold" type="submit" [disabled]="isSubmitting">
+              {{ isSubmitting ? 'Saving...' : 'Save Act' }}
+            </button>
+          </form>
+
+          <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
+          <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">Acts</h3>
+            <span class="badge bg-light text-dark">{{ acts.length }} items</span>
+          </div>
+
+          <div *ngIf="isLoading" class="text-light-emphasis">Loading acts...</div>
+          <div *ngIf="!isLoading && acts.length === 0" class="text-light-emphasis">No acts found.</div>
+
+          <div *ngIf="!isLoading && acts.length > 0" class="table-responsive">
+            <table class="table table-dark table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>Act Name</th>
+                  <th>Alias</th>
+                  <th>Date of Effect</th>
+                  <th>Act Details</th>
+                  <th>Legal Category</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of acts">
+                  <td>{{ item.actName }}</td>
+                  <td>{{ item.alias }}</td>
+                  <td>{{ item.dateOfEffect || '—' }}</td>
+                  <td>{{ item.actDetails || '—' }}</td>
+                  <td>{{ getCategoryName(item.legalCategoryId) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+</section>
