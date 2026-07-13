@@ -101,11 +101,11 @@ export class LiveStreamSender implements OnInit, OnDestroy {
         video: true,
         audio: true,
       });
-
+      this.status = 'localStream access';
       if (this.localVideo?.nativeElement) {
         this.localVideo.nativeElement.srcObject = this.localStream;
       }
-
+      this.status = 'localVideo activated';
       await this.liveStreamService.joinRoom('sender');
       await this.initializePeerConnection();
       this.isStreaming = true;
