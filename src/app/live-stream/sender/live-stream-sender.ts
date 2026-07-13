@@ -94,7 +94,7 @@ export class LiveStreamSender implements OnInit, OnDestroy {
     }
 
     this.errorMessage = '';
-    this.status = 'Requesting camera access';
+    this.status = 'Requesting camera access-1';
 
     try {
       this.localStream = await navigator.mediaDevices.getUserMedia({
