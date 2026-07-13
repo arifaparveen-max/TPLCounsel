@@ -1,0 +1,22 @@
+<section class="stream-page">
+  <div class="stream-shell">
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+      <button class="nav-button" routerLink="/live-stream/sender" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">📡 Sender</button>
+      <button class="nav-button" routerLink="/live-stream/receiver" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">📺 Receiver</button>
+    </div>
+    <div class="stream-card">
+      <h2>Go Live</h2>
+      <p>Start your camera and send the stream through the SignalR relay.</p>
+      <div class="d-flex gap-2 flex-wrap mb-3">
+        <button (click)="startCamera()" [disabled]="isStreaming">{{ isStreaming ? 'Streaming' : 'Start Camera' }}</button>
+        <button class="secondary" routerLink="/live-stream/receiver">Open Viewer</button>
+      </div>
+      <p class="status">Status: {{ status }}</p>
+      <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </div>
+
+    <div class="stream-card">
+      <video #localVideo autoplay muted playsinline></video>
+    </div>
+  </div>
+</section>

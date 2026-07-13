@@ -1,0 +1,19 @@
+<section class="stream-page">
+  <div class="stream-shell">
+    <div style="margin-bottom: 20px; display: flex; gap: 10px;">
+      <button class="nav-button" routerLink="/live-stream/sender" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">📡 Sender</button>
+      <button class="nav-button" routerLink="/live-stream/receiver" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">📺 Receiver</button>
+    </div>
+    <div class="stream-card">
+      <h2>Watch Live Stream</h2>
+      <p>Connect to the broadcaster and receive the stream through the relay.</p>
+      <button (click)="connectToBroadcast()" [disabled]="isWatching">{{ isWatching ? 'Watching' : 'Connect' }}</button>
+      <p class="status">Status: {{ status }}</p>
+      <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </div>
+
+    <div class="stream-card">
+      <video #remoteVideo autoplay playsinline></video>
+    </div>
+  </div>
+</section>

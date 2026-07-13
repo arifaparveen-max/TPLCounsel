@@ -12,6 +12,9 @@ import { ActMaster } from './act-master/act-master';
 import { ActDetails } from './act-details/act-details';
 import { AuthGuard } from './auth.guard';
 import { LegalCategory } from './legal-category/legal-category';
+import { LiveStreamSender } from './live-stream/sender/live-stream-sender';
+import { LiveStreamReceiver } from './live-stream/receiver/live-stream-receiver';
+
 export const routes: Routes = [
 
     {
@@ -65,8 +68,15 @@ export const routes: Routes = [
     {
         component: Login,
         path:'login'
+    },
+    {
+        component: LiveStreamSender,
+        path:'live-stream/sender'
+    },
+    {
+        component: LiveStreamReceiver,
+        path:'live-stream/receiver'
     }
-
 
 ];
 

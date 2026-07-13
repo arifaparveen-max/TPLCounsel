@@ -23,10 +23,12 @@
     "@angular/platform-server": "^22.0.0",
     "@angular/router": "^22.0.0",
     "@angular/ssr": "^22.0.5",
+    "@microsoft/signalr": "^8.0.0",
     "bootstrap": "^5.3.8",
     "express": "^5.1.0",
     "jquery": "^4.0.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.50.0",
+    "my-angular-app": "file:",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

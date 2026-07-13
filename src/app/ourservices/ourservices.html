@@ -1,0 +1,26 @@
+<div class="service">
+  <div class="container">
+    <div class="section-header">
+      <h2>Our Practices Areas</h2>
+    </div>
+
+    <div *ngIf="isLoading" class="text-center text-light-emphasis mb-4">Loading services...</div>
+    <div *ngIf="!isLoading && services.length === 0" class="text-center text-light-emphasis mb-4">
+      No services available at the moment.
+    </div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <div class="row">
+      <div class="col-lg-4 col-md-6" *ngFor="let service of services">
+        <div class="service-item">
+          <div class="service-icon">
+            <i class="{{ service.iconClass }}"></i>
+          </div>
+          <h3>{{ service.categoryName }}</h3>
+          <p style="text-align: justify;">{{ service.description }}</p>
+          <a class="btn" href="">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
