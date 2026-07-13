@@ -34,29 +34,56 @@ export class LiveStreamReceiver implements OnInit, OnDestroy {
 
   constructor(private liveStreamService: LiveStreamService) {}
 
-  async ngOnInit(): Promise<void> {
-    if (typeof window === 'undefined') {
-      return;
-    }
+  // async ngOnInit(): Promise<void> {
+  //   if (typeof window === 'undefined') {
+  //     return;
+  //   }
 
-    await this.liveStreamService.createConnection();
-    this.liveStreamService.onReceiveOffer((offer, senderConnectionId) => {
-      console.log('Offer received');
-      this.senderConnectionId = senderConnectionId;
-      this.handleIncomingOffer(offer);
-    });
+  //   await this.liveStreamService.createConnection();
+  //   this.liveStreamService.onReceiveOffer((offer, senderConnectionId) => {
+  //     console.log('Offer received');
+  //     this.senderConnectionId = senderConnectionId;
+  //     this.handleIncomingOffer(offer);
+  //   });
 
-    this.liveStreamService.onReceiveIceCandidate((candidate, fromConnectionId) => {
-      if (fromConnectionId === this.senderConnectionId && this.peerConnection) {
-        this.peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
-      }
-    });
+  //   this.liveStreamService.onReceiveIceCandidate((candidate, fromConnectionId) => {
+  //     if (fromConnectionId === this.senderConnectionId && this.peerConnection) {
+  //       this.peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
+  //     }
+  //   });
 
-    this.liveStreamService.onError((message) => {
-      this.errorMessage = message;
-      this.status = 'Error';
-    });
+  //   this.liveStreamService.onError((message) => {
+  //     this.errorMessage = message;
+  //     this.status = 'Error';
+  //   });
+  // }
+
+async ngOnInit(): Promise<void> {
+  if (typeof window === 'undefined') {
+    return;
   }
+
+  await this.liveStreamService.createConnection();
+
+  this.liveStreamService.onReceiveOffer((offer, senderConnectionId) => {
+    this.senderConnectionId = senderConnectionId;
+    this.handleIncomingOffer(offer);
+  });
+
+  this.liveStreamService.onReceiveIceCandidate((candidate, fromConnectionId) => {
+    if (fromConnectionId === this.senderConnectionId && this.peerConnection) {
+      this.peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
+    }
+  });
+
+  this.liveStreamService.onError((message) => {
+    this.errorMessage = message;
+    this.status = 'Error';
+  });
+
+  // Automatically connect
+  await this.connectToBroadcast();
+}
 
   async ngOnDestroy(): Promise<void> {
     this.peerConnection?.close();

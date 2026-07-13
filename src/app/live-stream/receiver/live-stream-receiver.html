@@ -7,8 +7,8 @@
     <div class="stream-card">
       <h2>Watch Live Stream</h2>
       <p>Connect to the broadcaster and receive the stream through the relay.</p>
-      <button (click)="connectToBroadcast()" [disabled]="isWatching">{{ isWatching ? 'Watching' : 'Connect' }}</button>
-      <p class="status">Status: {{ status }}</p>
+      <!-- <button (click)="connectToBroadcast()" [disabled]="isWatching">{{ isWatching ? 'Watching' : 'Connect' }}</button>
+       --> <p class="status">Status: {{ status }}</p>
       <p class="text-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
     </div>
 
