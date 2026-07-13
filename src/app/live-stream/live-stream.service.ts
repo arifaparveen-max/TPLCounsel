@@ -58,10 +58,20 @@ export class LiveStreamService {
     }
   }
 
+  onViewerJoined(handler: (viewerConnectionId: string) => void): void {
+    if (!this.connection) {
+      console.error('Connection not initialized when setting up onViewerJoined');
+      return;
+    }
+
+    this.connection.on('viewerJoined', handler);
+    console.log('Registered onViewerJoined handler');
+  }
+
   async joinRoom(role: 'sender' | 'viewer'): Promise<void> {
     await this.ensureConnection();
     console.log('Joining room as', role);
-    
+
     try {
       await this.connection!.invoke('JoinRoom', this.roomName);
       console.log('Joined room:', this.roomName);
@@ -79,10 +89,19 @@ export class LiveStreamService {
     }
   }
 
-  async sendOffer(offer: string): Promise<void> {
+  async sendOffer(
+    offer: string,
+    viewerConnectionId: string
+  ): Promise<void> {
+
     await this.ensureConnection();
-    console.log('Sending offer');
-    await this.connection!.invoke('SendOffer', this.roomName, offer);
+    console.log("Invoking SendOffer");
+    await this.connection!.invoke(
+      'SendOffer',
+      this.roomName,
+      offer,
+      viewerConnectionId
+    );
   }
 
   async sendAnswer(answer: string, senderConnectionId: string): Promise<void> {

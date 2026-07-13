@@ -34,7 +34,7 @@ export class LiveStreamSender implements OnInit, OnDestroy {
   private localStream?: MediaStream;
   private viewerConnectionId?: string;
 
-  constructor(private liveStreamService: LiveStreamService) {}
+  constructor(private liveStreamService: LiveStreamService) { }
 
   async ngOnInit(): Promise<void> {
     if (typeof window === 'undefined') {
@@ -58,6 +58,26 @@ export class LiveStreamSender implements OnInit, OnDestroy {
     this.liveStreamService.onError((message) => {
       this.errorMessage = message;
       this.status = 'Error';
+    });
+    this.liveStreamService.onViewerJoined(async (viewerConnectionId) => {
+
+      console.log("Viewer joined event fired");
+      console.log("Viewer Id:", viewerConnectionId);
+
+      this.viewerConnectionId = viewerConnectionId;
+
+      if (!this.peerConnection) {
+        console.log('PeerConnection not ready');
+        return;
+      }
+
+      const offer = await this.peerConnection.createOffer();
+
+      await this.peerConnection.setLocalDescription(offer);
+
+      console.log('Sending offer');
+
+      await this.liveStreamService.sendOffer(JSON.stringify(offer), viewerConnectionId);
     });
   }
 
@@ -112,14 +132,18 @@ export class LiveStreamSender implements OnInit, OnDestroy {
       }
     };
 
-    this.peerConnection.onnegotiationneeded = async () => {
-      if (!this.peerConnection || this.peerConnection.signalingState !== 'stable') {
-        return;
-      }
+    // this.peerConnection.onnegotiationneeded = async () => {
+    //   if (!this.peerConnection || this.peerConnection.signalingState !== 'stable') {
+    //     return;
+    //   }
 
-      const offer = await this.peerConnection.createOffer();
-      await this.peerConnection.setLocalDescription(offer);
-      await this.liveStreamService.sendOffer(JSON.stringify(offer));
-    };
+    //   const offer = await this.peerConnection.createOffer();
+    //   await this.peerConnection.setLocalDescription(offer);
+    //   await this.liveStreamService.sendOffer(JSON.stringify(offer));
+    // };
+
+
+
+
   }
 }

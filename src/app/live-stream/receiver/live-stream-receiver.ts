@@ -41,6 +41,7 @@ export class LiveStreamReceiver implements OnInit, OnDestroy {
 
     await this.liveStreamService.createConnection();
     this.liveStreamService.onReceiveOffer((offer, senderConnectionId) => {
+      console.log('Offer received');
       this.senderConnectionId = senderConnectionId;
       this.handleIncomingOffer(offer);
     });
@@ -84,10 +85,12 @@ export class LiveStreamReceiver implements OnInit, OnDestroy {
     });
 
     this.peerConnection.ontrack = (event) => {
+      
       const [stream] = event.streams;
       if (this.remoteVideo?.nativeElement && stream) {
         this.remoteVideo.nativeElement.srcObject = stream;
       }
+      console.log('Remote track received');
     };
 
     this.peerConnection.onicecandidate = async (event) => {
@@ -108,5 +111,19 @@ export class LiveStreamReceiver implements OnInit, OnDestroy {
     await this.peerConnection!.setLocalDescription(answer);
     await this.liveStreamService.sendAnswer(JSON.stringify(answer), this.senderConnectionId!);
     this.status = 'Receiving stream';
+
+      console.log('Setting remote description');
+
+      await this.peerConnection!.setRemoteDescription(
+      new RTCSessionDescription(JSON.parse(offer))
+      );
+
+      console.log('Creating answer');
+      await this.peerConnection!.setLocalDescription(answer);
+      console.log('Sending answer');
+      await this.liveStreamService.sendAnswer(
+      JSON.stringify(answer),
+      this.senderConnectionId!
+      );
   }
 }
