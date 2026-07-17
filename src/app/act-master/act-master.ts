@@ -6,12 +6,14 @@ import { finalize } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
 
 interface ActMasterPayload {
+  id?: number;
   actId?: number;
   actName: string;
   alias: string;
   dateOfEffect?: string | null;
   actDetails?: string | null;
   legalCategoryId?: number | null;
+  imagePath?: string | null;
 }
 
 interface LegalCategoryOption {
@@ -76,10 +78,13 @@ export class ActMaster implements OnInit {
   dateOfEffect = '';
   actDetails = '';
   legalCategoryId: number | '' = '';
+  imagePath = '';
+  selectedImageFile: File | null = null;
   isSubmitting = false;
   isLoading = false;
   successMessage = '';
   errorMessage = '';
+  editingActId: number | null = null;
 
   private readonly actApiUrl = 'https://employeesapi.runasp.net/api/ActMasters';
   private readonly legalCategoryApiUrl = 'https://employeesapi.runasp.net/api/LegalCategoryMasters';
@@ -106,34 +111,108 @@ export class ActMaster implements OnInit {
 
     this.isSubmitting = true;
 
-    const payload = {
-      actName: this.actName.trim(),
-      alias: this.alias.trim(),
-      dateOfEffect: this.dateOfEffect,
-      actDetails: this.actDetails.trim(),
-      legalCategoryId: Number(this.legalCategoryId),
-    };
+    const formData = new FormData();
+    formData.append('actName', this.actName.trim());
+    formData.append('alias', this.alias.trim());
+    formData.append('dateOfEffect', this.dateOfEffect);
+    formData.append('actDetails', this.actDetails.trim());
+    formData.append('legalCategoryId', String(Number(this.legalCategoryId)));
+    formData.append('imagePath', this.imagePath.trim() || (this.selectedImageFile ? this.selectedImageFile.name : ''));
 
-    this.http.post(this.actApiUrl, payload, { headers: this.getAuthHeaders() }).pipe(
+    if (this.selectedImageFile) {
+      formData.append('file', this.selectedImageFile, this.selectedImageFile.name);
+    }
+
+    const request$ = this.editingActId
+      ? this.http.put(`${this.actApiUrl}/${this.editingActId}`, formData, { headers: this.getAuthHeaders() })
+      : this.http.post(this.actApiUrl, formData, { headers: this.getAuthHeaders() });
+
+    request$.pipe(
       finalize(() => {
         this.isSubmitting = false;
         this.cdr.detectChanges();
       })
     ).subscribe({
       next: () => {
-        this.successMessage = 'Act created successfully.';
-        this.actName = '';
-        this.alias = '';
-        this.dateOfEffect = '';
-        this.actDetails = '';
-        this.legalCategoryId = '';
+        this.successMessage = this.editingActId ? 'Act updated successfully.' : 'Act created successfully.';
+        this.resetForm();
         this.loadActs();
       },
       error: (error: any) => {
-        this.errorMessage = 'Unable to create act. Please try again.';
-        console.error('Create act error:', error);
+        this.errorMessage = this.editingActId ? 'Unable to update act. Please try again.' : 'Unable to create act. Please try again.';
+        console.error('Act save error:', error);
       },
     });
+  }
+
+  editAct(item: ActMasterPayload): void {
+    const actId = this.getActId(item);
+    if (!actId) {
+      this.errorMessage = 'Unable to edit the selected act because no id was found.';
+      return;
+    }
+
+    this.editingActId = actId;
+    this.actName = item.actName || '';
+    this.alias = item.alias || '';
+    this.dateOfEffect = item.dateOfEffect || '';
+    this.actDetails = item.actDetails || '';
+    this.legalCategoryId = item.legalCategoryId ?? '';
+    this.imagePath = item.imagePath || '';
+    this.selectedImageFile = null;
+    this.successMessage = '';
+    this.errorMessage = '';
+  }
+
+  deleteAct(item: ActMasterPayload): void {
+    const actId = this.getActId(item);
+    if (!actId) {
+      this.errorMessage = 'Unable to delete the selected act because no id was found.';
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this act?')) {
+      return;
+    }
+
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.isLoading = true;
+
+    this.http.delete(`${this.actApiUrl}/${actId}`, { headers: this.getAuthHeaders() }).pipe(
+      finalize(() => {
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      next: () => {
+        this.successMessage = 'Act deleted successfully.';
+        if (this.editingActId === actId) {
+          this.resetForm();
+        }
+        this.loadActs();
+      },
+      error: (error: any) => {
+        this.errorMessage = 'Unable to delete act. Please try again.';
+        console.error('Delete act error:', error);
+      },
+    });
+  }
+
+  cancelEdit(): void {
+    this.resetForm();
+  }
+
+  onImageSelected(event: Event): void {
+    const target = event.target as HTMLInputElement;
+    const file = target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.selectedImageFile = file;
+    this.imagePath = file.name;
   }
 
   getCategoryName(legalCategoryId?: number | null): string {
@@ -143,6 +222,21 @@ export class ActMaster implements OnInit {
 
     const category = this.legalCategories.find((item) => (item.id ?? item.categoryId) === legalCategoryId);
     return category?.categoryName || '—';
+  }
+
+  private getActId(item: ActMasterPayload): number | null {
+    return item.id ?? item.actId ?? null;
+  }
+
+  private resetForm(): void {
+    this.actName = '';
+    this.alias = '';
+    this.dateOfEffect = '';
+    this.actDetails = '';
+    this.legalCategoryId = '';
+    this.imagePath = '';
+    this.selectedImageFile = null;
+    this.editingActId = null;
   }
 
   private loadActs(): void {
@@ -249,7 +343,6 @@ export class ActMaster implements OnInit {
     const token = this.authService.getBearerToken();
     return new HttpHeaders({
       Authorization: `Bearer ${token ?? ''}`,
-      'Content-Type': 'application/json',
     });
   }
 }

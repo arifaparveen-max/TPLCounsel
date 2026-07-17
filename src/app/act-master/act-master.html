@@ -3,8 +3,8 @@
     <div class="row g-4">
       <div class="col-lg-4">
         <div class="card p-4">
-          <h3 class="mb-3">Add Act</h3>
-          <p class="text-light-emphasis mb-4">Create a new act entry and send it to the API using the selected legal category.</p>
+          <h3 class="mb-3">{{ editingActId ? 'Edit Act' : 'Add Act' }}</h3>
+          <p class="text-light-emphasis mb-4">Create or update an act entry and attach an image when needed.</p>
 
           <form (ngSubmit)="submitForm()" #actForm="ngForm" class="d-grid gap-3">
             <div>
@@ -28,6 +28,13 @@
             </div>
 
             <div>
+              <label class="form-label">Image Path</label>
+              <input class="form-control" [(ngModel)]="imagePath" name="imagePath" placeholder="Image path or file name" />
+              <input class="form-control mt-2" type="file" accept="image/*" (change)="onImageSelected($event)" />
+              <small class="text-light-emphasis">Select an image from your device to upload.</small>
+            </div>
+
+            <div>
               <label class="form-label">Legal Category</label>
               <select class="form-select" [(ngModel)]="legalCategoryId" name="legalCategoryId" required>
                 <option value="">Select legal category</option>
@@ -37,9 +44,14 @@
               </select>
             </div>
 
-            <button class="btn btn-gold" type="submit" [disabled]="isSubmitting">
-              {{ isSubmitting ? 'Saving...' : 'Save Act' }}
-            </button>
+            <div class="d-flex gap-2">
+              <button class="btn btn-gold flex-grow-1" type="submit" [disabled]="isSubmitting">
+                {{ isSubmitting ? (editingActId ? 'Updating...' : 'Saving...') : (editingActId ? 'Update Act' : 'Save Act') }}
+              </button>
+              <button *ngIf="editingActId" class="btn btn-outline-light" type="button" (click)="cancelEdit()">
+                Cancel
+              </button>
+            </div>
           </form>
 
           <div *ngIf="successMessage" class="alert alert-success mt-3">{{ successMessage }}</div>
@@ -65,7 +77,9 @@
                   <th>Alias</th>
                   <th>Date of Effect</th>
                   <th>Act Details</th>
+                  <th>Image</th>
                   <th>Legal Category</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,7 +88,14 @@
                   <td>{{ item.alias }}</td>
                   <td>{{ item.dateOfEffect || '—' }}</td>
                   <td>{{ item.actDetails || '—' }}</td>
+                  <td>{{ item.imagePath || '—' }}</td>
                   <td>{{ getCategoryName(item.legalCategoryId) }}</td>
+                  <td>
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-sm btn-outline-light" type="button" (click)="editAct(item)">Edit</button>
+                      <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteAct(item)">Delete</button>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
