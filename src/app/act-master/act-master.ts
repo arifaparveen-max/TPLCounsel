@@ -5,6 +5,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
 import {environment} from '../../environments/environment'
+
 interface ActMasterPayload {
   id?: number;
   actId?: number;
@@ -89,7 +90,7 @@ export class ActMaster implements OnInit {
 
   private readonly actApiUrl = environment.baseUrl +'/ActMasters';
   private readonly legalCategoryApiUrl = environment.baseUrl +'/LegalCategoryMasters';
-
+  public readonly baseUrl = environment.baseUrl;
   constructor(
     private http: HttpClient,
     private authService: AuthService,
