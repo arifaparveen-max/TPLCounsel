@@ -111,6 +111,10 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+                        "ssl": true,
+                        "port": 4200
+                      },
           "configurations": {
             "production": {
               "buildTarget": "my-angular-app:build:production"

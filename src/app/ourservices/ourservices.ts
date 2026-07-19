@@ -25,7 +25,7 @@ export class Ourservices implements OnInit {
   services: LegalCategoryService[] = [];
   isLoading = false;
   errorMessage = '';
-  private readonly apiUrl = 'https://employeesapi.runasp.net/api/LegalCategoryMasters';
+  private readonly apiUrl = '${environment.baseUrl}/LegalCategoryMasters';
 
   constructor(
     private http: HttpClient,

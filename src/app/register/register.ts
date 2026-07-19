@@ -139,7 +139,7 @@ export class Register {
   successMessage = '';
   errorMessage = '';
 
-  private apiUrl = 'https://employeesapi.runasp.net/api/Users/register';
+  private apiUrl = '${environment.baseUrl}/Users/register';
 
   constructor(private http: HttpClient, private router: Router) {}
 

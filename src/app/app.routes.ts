@@ -14,6 +14,10 @@ import { AuthGuard } from './auth.guard';
 import { LegalCategory } from './legal-category/legal-category';
 import { LiveStreamSender } from './live-stream/sender/live-stream-sender';
 import { LiveStreamReceiver } from './live-stream/receiver/live-stream-receiver';
+import  { ActListing } from './act-listing/act-listing';
+
+
+
 
 export const routes: Routes = [
 
@@ -76,6 +80,11 @@ export const routes: Routes = [
     {
         component: LiveStreamReceiver,
         path:'live-stream/receiver'
+    }
+    ,
+    {
+        component: ActListing,
+        path:'acts'
     }
 
 ];

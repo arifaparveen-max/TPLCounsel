@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -28,7 +29,9 @@ export class AuthService {
   }
 
   login(emailOrUsername: string, password: string): Observable<any> {
-    return this.http.post('https://employeesapi.runasp.net/api/Users/login', {
+    var fullPath=environment.baseUrl + '/Users/login'
+
+    return this.http.post(fullPath, {
       emailOrUsername,
       password,
     }).pipe(

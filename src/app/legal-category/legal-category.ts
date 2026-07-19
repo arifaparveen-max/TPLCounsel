@@ -75,7 +75,7 @@ export class LegalCategory implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  private readonly apiUrl = 'https://employeesapi.runasp.net/api/LegalCategoryMasters';
+  private readonly apiUrl = '${environment.baseUrl}/LegalCategoryMasters';
 
   constructor(
     private http: HttpClient,

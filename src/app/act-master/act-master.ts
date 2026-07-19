@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
-
+import {environment} from '../../environments/environment'
 interface ActMasterPayload {
   id?: number;
   actId?: number;
@@ -74,6 +74,7 @@ export class ActMaster implements OnInit {
   acts: ActMasterPayload[] = [];
   legalCategories: LegalCategoryOption[] = [];
   actName = '';
+  actId=0;
   alias = '';
   dateOfEffect = '';
   actDetails = '';
@@ -86,8 +87,8 @@ export class ActMaster implements OnInit {
   errorMessage = '';
   editingActId: number | null = null;
 
-  private readonly actApiUrl = 'https://employeesapi.runasp.net/api/ActMasters';
-  private readonly legalCategoryApiUrl = 'https://employeesapi.runasp.net/api/LegalCategoryMasters';
+  private readonly actApiUrl = environment.baseUrl +'/ActMasters';
+  private readonly legalCategoryApiUrl = environment.baseUrl +'/LegalCategoryMasters';
 
   constructor(
     private http: HttpClient,
@@ -112,6 +113,11 @@ export class ActMaster implements OnInit {
     this.isSubmitting = true;
 
     const formData = new FormData();
+    if (this.editingActId!=null && this.editingActId!=0)
+    {
+      formData.append('actId', String(Number(this.editingActId)));
+    }
+     
     formData.append('actName', this.actName.trim());
     formData.append('alias', this.alias.trim());
     formData.append('dateOfEffect', this.dateOfEffect);
@@ -120,7 +126,7 @@ export class ActMaster implements OnInit {
     formData.append('imagePath', this.imagePath.trim() || (this.selectedImageFile ? this.selectedImageFile.name : ''));
 
     if (this.selectedImageFile) {
-      formData.append('file', this.selectedImageFile, this.selectedImageFile.name);
+      formData.append('actImage', this.selectedImageFile, this.selectedImageFile.name);
     }
 
     const request$ = this.editingActId

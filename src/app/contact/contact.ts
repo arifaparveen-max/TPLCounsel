@@ -21,7 +21,7 @@ export class Contact {
   successMessage: string = '';
   errorMessage: string = '';
 
-  private apiUrl = 'https://employeesapi.runasp.net/api/Emails/send';
+  private apiUrl = '${environment.baseUrl}/Emails/send';
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
