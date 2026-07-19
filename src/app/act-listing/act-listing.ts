@@ -119,11 +119,12 @@ export class ActListing implements OnInit {
 
   getActImage(item: ActListingItem): string {
     const imagePath = this.baseImgUrl + item.imagePath?.trim();
+    console.log("imagePath:" + imagePath)
     if (!imagePath) {
       return 'assets/img/blog-1.jpg';
     }
 
-    return imagePath.startsWith('http') ? imagePath : `${imagePath}`;
+    return imagePath.startsWith('https') ? imagePath : `${imagePath}`;
   }
 
   getFormattedDate(value?: string | null): string {
