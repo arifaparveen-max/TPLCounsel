@@ -3,4 +3,5 @@ export const environment = {
   hubUrl: 'https://employeesapi.runasp.net/liveStreamHub',  // Update with your production URL
   baseUrl: 'https://employeesapi.runasp.net/api',
   imgURL: 'https://employeesapi.runasp.net',
+  baseImgUrl: 'https://employeesapi.runasp.net',
 };

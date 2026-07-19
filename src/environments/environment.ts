@@ -3,4 +3,5 @@ export const environment = {
   hubUrl: 'https://employeesapi.runasp.net/liveStreamHub',
   baseUrl: 'https://localhost:7104/api',
   imgURL: 'https://localhost:7104',
+  baseImgUrl: 'https://localhost:7104',
 };
