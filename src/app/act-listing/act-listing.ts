@@ -118,7 +118,7 @@ export class ActListing implements OnInit {
   }
 
   getActImage(item: ActListingItem): string {
-    const imagePath = item.imagePath?.trim();
+    const imagePath = this.baseImgUrl + item.imagePath?.trim();
     if (!imagePath) {
       return 'assets/img/blog-1.jpg';
     }
