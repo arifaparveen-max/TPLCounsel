@@ -90,7 +90,7 @@ export class ActMaster implements OnInit {
 
   private readonly actApiUrl = environment.baseUrl +'/ActMasters';
   private readonly legalCategoryApiUrl = environment.baseUrl +'/LegalCategoryMasters';
-  public readonly baseUrl = environment.baseUrl;
+  public readonly baseImgUrl = environment.imgURL;
   constructor(
     private http: HttpClient,
     private authService: AuthService,
@@ -154,6 +154,9 @@ export class ActMaster implements OnInit {
 
   editAct(item: ActMasterPayload): void {
     const actId = this.getActId(item);
+    if (item.dateOfEffect) {
+                            item.dateOfEffect = item.dateOfEffect.split('T')[0];
+                            }
     if (!actId) {
       this.errorMessage = 'Unable to edit the selected act because no id was found.';
       return;

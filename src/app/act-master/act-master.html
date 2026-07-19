@@ -86,7 +86,7 @@
                 <tr *ngFor="let item of acts">
                   <td>{{ item.actName }}</td>
                   <td>{{ item.alias }}</td>
-                  <td>{{ item.dateOfEffect || '—' }}</td>
+                  <td>{{ item.dateOfEffect  || '—' }}</td>
                   <td>{{ item.actDetails || '—' }}</td>
                   <td><img
     *ngIf="item.imagePath; else noImage"
