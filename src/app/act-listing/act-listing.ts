@@ -123,7 +123,7 @@ export class ActListing implements OnInit {
       return 'assets/img/blog-1.jpg';
     }
 
-    return imagePath.startsWith('http') ? imagePath : `${this.baseImgUrl}${imagePath}`;
+    return imagePath.startsWith('http') ? imagePath : `${imagePath}`;
   }
 
   getFormattedDate(value?: string | null): string {
