@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -139,7 +140,7 @@ export class Register {
   successMessage = '';
   errorMessage = '';
 
-  private apiUrl = '${environment.baseUrl}/Users/register';
+  private apiUrl = environment.baseUrl+'/Users/register';
 
   constructor(private http: HttpClient, private router: Router) {}
 

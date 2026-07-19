@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
 
 interface LegalCategoryService {
   id: number;
@@ -25,7 +26,7 @@ export class Ourservices implements OnInit {
   services: LegalCategoryService[] = [];
   isLoading = false;
   errorMessage = '';
-  private readonly apiUrl = '${environment.baseUrl}/LegalCategoryMasters';
+  private readonly apiUrl = environment.baseUrl+'/LegalCategoryMasters';
 
   constructor(
     private http: HttpClient,

@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { Footer } from "../footer/footer";
 import { ChangeDetectorRef } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-contact',
@@ -21,7 +22,7 @@ export class Contact {
   successMessage: string = '';
   errorMessage: string = '';
 
-  private apiUrl = '${environment.baseUrl}/Emails/send';
+  private apiUrl = environment.baseUrl+'/Emails/send';
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 

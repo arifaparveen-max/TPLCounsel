@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment.prod';
 
 interface LegalCategoryPayload {
   id?: number;
@@ -75,7 +76,7 @@ export class LegalCategory implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  private readonly apiUrl = '${environment.baseUrl}/LegalCategoryMasters';
+  private readonly apiUrl = environment.baseUrl+ '/LegalCategoryMasters';
 
   constructor(
     private http: HttpClient,

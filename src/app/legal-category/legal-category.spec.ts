@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { LegalCategory } from './legal-category';
 import { AuthService } from '../auth.service';
+import { environment } from '../../environments/environment';
 
 describe('LegalCategory', () => {
   let component: LegalCategory;
@@ -31,7 +32,7 @@ describe('LegalCategory', () => {
   it('loads categories with a bearer token attached', () => {
     fixture.detectChanges();
 
-    const req = httpMock.expectOne('${environment.baseUrl}/LegalCategoryMasters');
+    const req = httpMock.expectOne(environment.baseUrl + '/LegalCategoryMasters');
     expect(req.request.method).toBe('GET');
     expect(req.request.headers.get('Authorization')).toBe('Bearer test-token');
     req.flush([{ categoryName: 'Family Law', alias: 'family', description: 'Desc', categoryIconPath: '', iconClass: '' }]);
@@ -44,7 +45,7 @@ describe('LegalCategory', () => {
   it('normalizes wrapped API responses so rows render', () => {
     fixture.detectChanges();
 
-    const req = httpMock.expectOne('${environment.baseUrl}/LegalCategoryMasters');
+    const req = httpMock.expectOne(environment.baseUrl+'/LegalCategoryMasters');
     req.flush({
       data: [{ categoryName: 'Corporate Law', alias: 'corporate', description: 'Corporate matters', categoryIconPath: '/img/corporate.png', iconClass: 'fa-briefcase' }],
       count: 1,
