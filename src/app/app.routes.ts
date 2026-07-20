@@ -15,6 +15,7 @@ import { LegalCategory } from './legal-category/legal-category';
 import { LiveStreamSender } from './live-stream/sender/live-stream-sender';
 import { LiveStreamReceiver } from './live-stream/receiver/live-stream-receiver';
 import  { ActListing } from './act-listing/act-listing';
+import { ActDetailsListing } from './act-details-listing/act-details-listing';
 
 
 
@@ -85,6 +86,10 @@ export const routes: Routes = [
     {
         component: ActListing,
         path:'acts'
+    },
+    {
+        component: ActDetailsListing,
+        path:'act-details-listing/:id'
     }
 
 ];

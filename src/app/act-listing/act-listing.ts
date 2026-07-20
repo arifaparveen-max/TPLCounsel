@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Footer } from "../footer/footer";
@@ -78,7 +79,7 @@ export class ActListing implements OnInit {
 
   private readonly apiUrl = environment.baseUrl + '/ActMasters';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router) {}
 
   ngOnInit(): void {
     this.loadActs();
@@ -125,8 +126,17 @@ export class ActListing implements OnInit {
       return 'assets/img/blog-1.jpg';
     }
     imagePath =this.baseImgUrl  + imagePath;
-    console.log("imagePath:" + imagePath)
     return imagePath.startsWith('https') ? imagePath : `${imagePath}`;
+  }
+
+  selectAct(act: ActListingItem): void {
+    const actId = act.actId ?? act.id;
+    if (actId) {
+      this.router.navigate(['/act-details-listing', actId]);
+      return;
+    }
+
+    this.router.navigate(['/act-details-listing']);
   }
 
   getFormattedDate(value?: string | null): string {

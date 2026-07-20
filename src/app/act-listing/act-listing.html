@@ -24,7 +24,7 @@
           <p>{{ getFormattedDate(act.dateOfEffect) }}</p>
         </div>
         <p>{{ act.actDetails || 'Detailed information about this act will be available soon.' }}</p>
-        <a class="btn btn-outline-secondary" href="javascript:void(0)">Read More <i class="fa fa-angle-right"></i></a>
+        <a class="btn btn-outline-secondary" href="javascript:void(0)" (click)="selectAct(act)">Read More <i class="fa fa-angle-right"></i></a>
       </div>
     </div>
 

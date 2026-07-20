@@ -1,11 +1,116 @@
 <div class="admin-panel">
   <div class="section-header">
     <h2>Act Details</h2>
-    <p>View detailed information for each act record. This page is ideal for drill-down summaries and record-specific details.</p>
+    <p>Manage act detail records for sections, offences, punishments, and trial information.</p>
   </div>
 
   <div class="panel-card">
-    <h3>Act Details Overview</h3>
-    <p>You can add detail panels here to show act-specific statutes, sections, and administrative notes.</p>
+    <h3>{{ editingActDetailId ? 'Edit Act Detail' : 'Add Act Detail' }}</h3>
+    <form #actDetailsForm="ngForm" (ngSubmit)="submitForm()">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Section</label>
+          <input class="form-control" [(ngModel)]="section" name="section" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Act Name</label>
+          <select class="form-select" [(ngModel)]="selectedActMasterId" name="selectedActMasterId" required>
+            <option [ngValue]="null">Select Act Master</option>
+            <option *ngFor="let act of actMasterOptions" [ngValue]="act.id ?? act.actId">
+              {{ act.actName }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Offence</label>
+          <input class="form-control" [(ngModel)]="offence" name="offence" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Punishment</label>
+          <input class="form-control" [(ngModel)]="punishment" name="punishment" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Cognizable / Non-Cognizable</label>
+          <input class="form-control" [(ngModel)]="cognizableOrNon_Cognizable" name="cognizableOrNon_Cognizable" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Bailable / Non-Bailable</label>
+          <input class="form-control" [(ngModel)]="bailableOrNon_Bailable" name="bailableOrNon_Bailable" required>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Trial Court</label>
+          <input class="form-control" [(ngModel)]="trialCourt" name="trialCourt" required>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-gold" type="submit" [disabled]="isSubmitting">
+          {{ editingActDetailId ? 'Update' : 'Save' }}
+        </button>
+        <button class="btn btn-outline-secondary" type="button" (click)="cancelEdit()" *ngIf="editingActDetailId">
+          Cancel
+        </button>
+      </div>
+
+      <div class="mt-3" *ngIf="successMessage">
+        <div class="alert alert-success">{{ successMessage }}</div>
+      </div>
+      <div class="mt-3" *ngIf="errorMessage">
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel-card">
+    <h3>Existing Act Details</h3>
+    <div class="row g-3 mb-3">
+      <div class="col-md-6">
+        <label class="form-label">Search</label>
+        <input class="form-control" [(ngModel)]="searchTerm" name="searchTerm" placeholder="Search by section, offence, punishment, court, or act name">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Filter by Act Master</label>
+        <select class="form-select" [(ngModel)]="selectedActFilterId" name="selectedActFilterId">
+          <option [ngValue]="null">All Act Masters</option>
+          <option *ngFor="let act of actMasterOptions" [ngValue]="act.id ?? act.actId">
+            {{ act.actName }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Section</th>
+            <th>Offence</th>
+            <th>Punishment</th>
+            <th>Cognizable</th>
+            <th>Bailable</th>
+            <th>Trial Court</th>
+            <th>Act Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredActDetailsList">
+            <td>{{ item.section }}</td>
+            <td>{{ item.offence }}</td>
+            <td>{{ item.punishment }}</td>
+            <td>{{ item.cognizableOrNon_Cognizable }}</td>
+            <td>{{ item.bailableOrNon_Bailable }}</td>
+            <td>{{ item.trialCourt }}</td>
+            <td>{{ getActMasterDisplayName(item.actName) }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-2" type="button" (click)="editActDetail(item)">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteActDetail(item)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="!isLoading && actDetailsList.length === 0">
+            <td colspan="8" class="text-center text-muted">No act details available yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

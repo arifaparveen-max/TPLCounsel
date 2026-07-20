@@ -1,0 +1,99 @@
+<div class="page-shell">
+  <div class="container">
+    <a class="back-link" href="javascript:void(0)" (click)="goBack()">
+      <i class="fa fa-arrow-left"></i> Back to Acts
+    </a>
+
+    <div class="section-header">
+      <h2 class="page-title">{{ currentActName }}</h2>
+      <p class="page-caption">Search and review the detailed sections, offences, punishments and court information for this act.</p>
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+
+    <div *ngIf="isLoading" class="text-center py-4">
+      <div class="spinner-border text-warning" role="status"></div>
+    </div>
+
+    <div *ngIf="!isLoading && !errorMessage" class="table-card">
+      <div class="table-responsive">
+        <table class="table mb-0">
+          <thead class="table-head">
+            <tr>
+              <th class="column-section" style="background-color: #aa9166;">
+                <div class="mb-2">Section</div>
+                <hr/>
+                <input class="search-input" [(ngModel)]="searchFilters.section" (ngModelChange)="onFilterChange()" placeholder="Search section">
+              </th>
+              <th class="column-offence" style="background-color: #aa9166;">
+                <div class="mb-2">Offence</div>
+                <hr/>
+                <input class="search-input" [(ngModel)]="searchFilters.offence" (ngModelChange)="onFilterChange()" placeholder="Search offence">
+              </th>
+              <th class="column-punishment" style="background-color: #aa9166;">
+                <div class="mb-2">Punishment</div>
+                <hr/>
+                <input class="search-input" [(ngModel)]="searchFilters.punishment" (ngModelChange)="onFilterChange()" placeholder="Search punishment">
+              </th>
+              <th class="column-cognizable" style="background-color: #aa9166;">
+                <div class="mb-2">Cognizable</div>
+                <hr/>
+                <input class="search-input" [(ngModel)]="searchFilters.cognizableOrNon_Cognizable" (ngModelChange)="onFilterChange()" placeholder="Search cognizable">
+              </th>
+              <th class="column-bailable" style="background-color: #aa9166;">
+                <div class="mb-2">Bailable</div>
+                <hr/>
+                <input class="search-input" [(ngModel)]="searchFilters.bailableOrNon_Bailable" (ngModelChange)="onFilterChange()" placeholder="Search bailable">
+              </th>
+              <th class="column-court" style="background-color: #aa9166;">
+                <div class="mb-2">Trial Court</div>
+                <hr/>
+                <input class="search-input" [(ngModel)]="searchFilters.trialCourt" (ngModelChange)="onFilterChange()" placeholder="Search court">
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="filteredDetails.length === 0" class="table-row">
+              <td colspan="6">
+                <div class="empty-state">No matching act details found for the selected filters.</div>
+              </td>
+            </tr>
+            <tr *ngFor="let detail of paginatedDetails" class="table-row">
+              <td class="column-section">{{ detail.section || '—' }}</td>
+              <td class="column-offence">{{ detail.offence || '—' }}</td>
+              <td class="column-punishment">{{ detail.punishment || '—' }}</td>
+              <td class="column-cognizable">{{ detail.cognizableOrNon_Cognizable || '—' }}</td>
+              <td class="column-bailable">{{ detail.bailableOrNon_Bailable || '—' }}</td>
+              <td class="column-court">{{ detail.trialCourt || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div *ngIf="filteredDetails.length > 0" class="pagination-bar d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2 page-size-container">
+        <label class="mb-0 text-muted">Show</label>
+        <select class="page-size-select" [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+        </select>
+        <span class="text-muted">records</span>
+      </div>
+
+      <div class="pagination-nav" *ngIf="totalPages > 1">
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPreviousPage()">Previous</a>
+          </li>
+          <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page === currentPage">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" href="javascript:void(0)" (click)="goToNextPage()">Next</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
