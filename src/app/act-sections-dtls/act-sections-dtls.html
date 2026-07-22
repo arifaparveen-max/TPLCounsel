@@ -1,0 +1,150 @@
+<div class="admin-panel">
+  <div class="section-header">
+    <h2>Act Section Details</h2>
+    <p>Manage section detail records with objective, illustration, and exception HTML content.</p>
+  </div>
+
+  <div class="panel-card">
+    <h3>{{ editingActSectionDtlsId ? 'Edit Section Detail' : 'Add Section Detail' }}</h3>
+    <form #actSectionDtlsForm="ngForm" (ngSubmit)="submitForm()">
+      <div class="row g-3">
+        <div class="col-md-6" *ngIf="editingActSectionDtlsId">
+          <label class="form-label">Section Id</label>
+          <input class="form-control" type="number" [ngModel]="sectionId" name="sectionId" readonly>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Act</label>
+          <select class="form-select" [(ngModel)]="actId" name="actId" required>
+            <option [ngValue]="null">Select Act Master</option>
+            <option *ngFor="let act of actMasterOptions" [ngValue]="act.actId ?? act.id">
+              {{ act.actName || ('Act ' + (act.actId ?? act.id)) }}
+            </option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Section No</label>
+          <input class="form-control" type="number" [(ngModel)]="sectionNo" name="sectionNo" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Case Study Id</label>
+          <input class="form-control" type="number" [(ngModel)]="caseStudyId" name="caseStudyId" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Chapter Name</label>
+          <input class="form-control" [(ngModel)]="chapterName" name="chapterName" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Bare Act</label>
+          <input class="form-control" [(ngModel)]="bareAct" name="bareAct" required>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Meaning</label>
+          <div class="editor-toolbar">
+            <button type="button" (click)="focusEditor('meaning')">Edit</button>
+            <button type="button" (click)="applyEditorCommand('bold')"><b>B</b></button>
+            <button type="button" (click)="applyEditorCommand('italic')"><i>I</i></button>
+            <button type="button" (click)="applyEditorCommand('underline')"><u>U</u></button>
+            <button type="button" (click)="applyEditorCommand('insertUnorderedList')">• List</button>
+            <button type="button" (click)="applyEditorCommand('insertOrderedList')">1. List</button>
+          </div>
+          <div class="html-editor" contenteditable="true" [attr.data-editor]="'meaning'" [innerHTML]="meaning" (focus)="activeEditor = 'meaning'" (input)="setEditorValue('meaning', $event)" required></div>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Objective</label>
+          <div class="editor-toolbar">
+            <button type="button" (click)="focusEditor('objective')">Edit</button>
+            <button type="button" (click)="applyEditorCommand('bold')"><b>B</b></button>
+            <button type="button" (click)="applyEditorCommand('italic')"><i>I</i></button>
+            <button type="button" (click)="applyEditorCommand('underline')"><u>U</u></button>
+            <button type="button" (click)="applyEditorCommand('insertUnorderedList')">• List</button>
+            <button type="button" (click)="applyEditorCommand('insertOrderedList')">1. List</button>
+          </div>
+          <div class="html-editor" contenteditable="true" [attr.data-editor]="'objective'" [innerHTML]="objective" (focus)="activeEditor = 'objective'" (input)="setEditorValue('objective', $event)" required></div>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Illustration</label>
+          <div class="editor-toolbar">
+            <button type="button" (click)="focusEditor('illustration')">Edit</button>
+            <button type="button" (click)="applyEditorCommand('bold')"><b>B</b></button>
+            <button type="button" (click)="applyEditorCommand('italic')"><i>I</i></button>
+            <button type="button" (click)="applyEditorCommand('underline')"><u>U</u></button>
+            <button type="button" (click)="applyEditorCommand('insertUnorderedList')">• List</button>
+            <button type="button" (click)="applyEditorCommand('insertOrderedList')">1. List</button>
+          </div>
+          <div class="html-editor" contenteditable="true" [attr.data-editor]="'illustration'" [innerHTML]="illustration" (focus)="activeEditor = 'illustration'" (input)="setEditorValue('illustration', $event)" required></div>
+        </div>
+        <div class="col-md-12">
+          <label class="form-label">Exception</label>
+          <div class="editor-toolbar">
+            <button type="button" (click)="focusEditor('exception')">Edit</button>
+            <button type="button" (click)="applyEditorCommand('bold')"><b>B</b></button>
+            <button type="button" (click)="applyEditorCommand('italic')"><i>I</i></button>
+            <button type="button" (click)="applyEditorCommand('underline')"><u>U</u></button>
+            <button type="button" (click)="applyEditorCommand('insertUnorderedList')">• List</button>
+            <button type="button" (click)="applyEditorCommand('insertOrderedList')">1. List</button>
+          </div>
+          <div class="html-editor" contenteditable="true" [attr.data-editor]="'exception'" [innerHTML]="exception" (focus)="activeEditor = 'exception'" (input)="setEditorValue('exception', $event)" required></div>
+        </div>
+      </div>
+
+      <div class="mt-4 d-flex gap-2">
+        <button class="btn btn-gold" type="submit" [disabled]="isSubmitting">
+          {{ editingActSectionDtlsId ? 'Update' : 'Save' }}
+        </button>
+        <button class="btn btn-outline-secondary" type="button" (click)="cancelEdit()" *ngIf="editingActSectionDtlsId">
+          Cancel
+        </button>
+      </div>
+
+      <div class="mt-3" *ngIf="successMessage">
+        <div class="alert alert-success">{{ successMessage }}</div>
+      </div>
+      <div class="mt-3" *ngIf="errorMessage">
+        <div class="alert alert-danger">{{ errorMessage }}</div>
+      </div>
+    </form>
+  </div>
+
+  <div class="panel-card">
+    <h3>Existing Section Details</h3>
+    <div class="row g-3 mb-3">
+      <div class="col-md-12">
+        <label class="form-label">Search</label>
+        <input class="form-control" [(ngModel)]="searchTerm" name="searchTerm" placeholder="Search by chapter, bare act, meaning, objective, illustration, or exception">
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Section Id</th>
+            <th>Act Id</th>
+            <th>Section No</th>
+            <th>Chapter</th>
+            <th>Bare Act</th>
+            <th>Case Study Id</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredActSectionDtlsList">
+            <td>{{ item.sectionId }}</td>
+            <td>{{ item.actId }}</td>
+            <td>{{ item.sectionNo }}</td>
+            <td>{{ item.chapterName }}</td>
+            <td>{{ item.bareAct }}</td>
+            <td>{{ item.caseStudyId }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary me-2" type="button" (click)="editActSectionDtls(item)">Edit</button>
+              <button class="btn btn-sm btn-outline-danger" type="button" (click)="deleteActSectionDtls(item)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="!isLoading && actSectionDtlsList.length === 0">
+            <td colspan="7" class="text-center text-muted">No section details available yet.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

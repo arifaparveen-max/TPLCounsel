@@ -1,0 +1,160 @@
+<div class="section-listing">
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+  <div class="search-container">
+    <div class="search-box">
+      <label>Section Id</label>
+      <input
+        type="text"
+        [(ngModel)]="searchSection"
+        placeholder="Search section"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Act Id</label>
+      <input
+        type="text"
+        [(ngModel)]="searchActId"
+        placeholder="Search act id"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Section No</label>
+      <input
+        type="text"
+        [(ngModel)]="searchSection"
+        placeholder="Search section no"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Chapter Name</label>
+      <input
+        type="text"
+        [(ngModel)]="searchCourt"
+        placeholder="Search chapter"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Bare Act</label>
+      <input
+        type="text"
+        [(ngModel)]="searchOffence"
+        placeholder="Search bare act"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Meaning</label>
+      <input
+        type="text"
+        [(ngModel)]="searchCognizable"
+        placeholder="Search meaning"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Objective</label>
+      <input
+        type="text"
+        [(ngModel)]="searchPunishment"
+        placeholder="Search objective"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Illustration</label>
+      <input
+        type="text"
+        [(ngModel)]="searchIllustration"
+        placeholder="Search illustration"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Exception</label>
+      <input
+        type="text"
+        [(ngModel)]="searchBailable"
+        placeholder="Search exception"
+        class="form-control"
+      />
+    </div>
+
+    <div class="search-box">
+      <label>Case Study Id</label>
+      <input
+        type="text"
+        [(ngModel)]="searchCaseStudyId"
+        placeholder="Search case study id"
+        class="form-control"
+      />
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading">Loading section details...</div>
+
+  <div *ngIf="!isLoading">
+    <div class="table-wrapper" *ngIf="filteredData.length > 0; else noData">
+      <table class="section-table">
+        <thead>
+          <tr>
+            <th>Section Id</th>
+            <th>Act Id</th>
+            <th>Section No</th>
+            <th>Chapter Name</th>
+            <th>Bare Act</th>
+            <th class="wide-column-header">Meaning / Objective / Illustration / Exception</th>
+            <th>Case Study Id</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredData">
+            <td>{{ item.sectionId }}</td>
+            <td>{{ item.actId }}</td>
+            <td>{{ item.sectionNo }}</td>
+            <td>{{ item.chapterName }}</td>
+            <td>{{ item.bareAct }}</td>
+            <td class="wide-column merged-column">
+              <div class="field-group">
+                <div class="field-label">Meaning:</div>
+                <div class="field-value">{{ item.meaning }}</div>
+              </div>
+              <hr />
+              <div class="field-group">
+                <div class="field-label">Objective:</div>
+                <div class="field-value" [innerHTML]="item.objectiveSafe"></div>
+              </div>
+              <hr />
+              <div class="field-group">
+                <div class="field-label">Illustration:</div>
+                <div class="field-value" [innerHTML]="item.illustrationSafe"></div>
+              </div>
+              <hr />
+              <div class="field-group">
+                <div class="field-label">Exception:</div>
+                <div class="field-value" [innerHTML]="item.exceptionSafe"></div>
+              </div>
+            </td>
+            <td>{{ item.caseStudyId }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #noData>
+      <div class="no-data">No section details found matching your search criteria.</div>
+    </ng-template>
+  </div>
+</div>

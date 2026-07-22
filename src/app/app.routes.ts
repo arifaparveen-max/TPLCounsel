@@ -16,6 +16,8 @@ import { LiveStreamSender } from './live-stream/sender/live-stream-sender';
 import { LiveStreamReceiver } from './live-stream/receiver/live-stream-receiver';
 import  { ActListing } from './act-listing/act-listing';
 import { ActDetailsListing } from './act-details-listing/act-details-listing';
+import { ActSectionsDtls } from './act-sections-dtls/act-sections-dtls';
+import { ActSectionDtlsListing } from './act-section-dtls-listing/act-section-dtls-listing';
 
 
 
@@ -90,6 +92,14 @@ export const routes: Routes = [
     {
         component: ActDetailsListing,
         path:'act-details-listing/:id'
+    },
+    {
+        component: ActSectionsDtls,
+        path:'act-sections-dtls'
+    },
+     {
+        component:ActSectionDtlsListing,
+        path:'act-section-dtls-listing'
     }
 
 ];
