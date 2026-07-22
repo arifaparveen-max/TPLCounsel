@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AuthService } from '../auth.service';
-import { finalize } from 'rxjs/operators';
+import { finalize, switchMap } from 'rxjs/operators';
 
 interface ActSectionDtl {
   sectionId: string | number;
@@ -19,10 +19,17 @@ interface ActSectionDtl {
   caseStudyId: string | number;
 }
 
+interface ActMasterOption {
+  id?: number;
+  actId?: number;
+  actName?: string | null;
+}
+
 interface DisplayItem extends ActSectionDtl {
   objectiveSafe: SafeHtml;
   illustrationSafe: SafeHtml;
   exceptionSafe: SafeHtml;
+  actName?: string;
 }
 
 @Component({
@@ -164,20 +171,49 @@ interface DisplayItem extends ActSectionDtl {
 
     .field-group {
       margin: 12px 0;
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .field-toggle {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      background: transparent;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      color: #121518;
+      font: inherit;
+    }
+
+    .field-toggle:hover {
+      background: #f1f1f1;
     }
 
     .field-label {
       font-weight: 700;
       color: #121518;
-      margin-bottom: 6px;
       font-size: 0.9rem;
       text-transform: uppercase;
+    }
+
+    .toggle-text {
+      font-size: 0.8rem;
+      color: #aa9166;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
     }
 
     .field-value {
       color: #333;
       line-height: 1.5;
-      margin-bottom: 8px;
+      padding: 0 12px 12px;
     }
 
     .merged-column hr {
@@ -263,6 +299,7 @@ export class ActSectionDtlsListing implements OnInit {
   actSectionDtlsList: DisplayItem[] = [];
   isLoading = false;
   errorMessage = '';
+  expandedFieldState: Record<string, Record<string, boolean>> = {};
 
   searchSection = '';
   searchOffence = '';
@@ -271,10 +308,12 @@ export class ActSectionDtlsListing implements OnInit {
   searchBailable = '';
   searchCourt = '';
   searchIllustration = '';
-  searchActId = '';
+  searchActName = '';
   searchCaseStudyId = '';
 
   private readonly apiUrl = 'https://employeesapi.runasp.net/api/ActSectionDtls';
+  private readonly actMasterApiUrl = 'https://employeesapi.runasp.net/api/ActMasters';
+  private actMasterOptions: ActMasterOption[] = [];
 
   constructor(
     private http: HttpClient,
@@ -283,14 +322,18 @@ export class ActSectionDtlsListing implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadActSectionDtls();
+    this.loadData();
   }
 
-  private loadActSectionDtls(): void {
+  private loadData(): void {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.http.get<unknown>(this.apiUrl).pipe(
+    this.http.get<unknown>(this.actMasterApiUrl).pipe(
+      switchMap((response) => {
+        this.actMasterOptions = this.normalizeActMastersResponse(response);
+        return this.http.get<unknown>(this.apiUrl);
+      }),
       finalize(() => {
         this.isLoading = false;
       }),
@@ -328,6 +371,7 @@ export class ActSectionDtlsListing implements OnInit {
       objectiveSafe: this.sanitizer.bypassSecurityTrustHtml(item.objective),
       illustrationSafe: this.sanitizer.bypassSecurityTrustHtml(item.illustration),
       exceptionSafe: this.sanitizer.bypassSecurityTrustHtml(item.exception),
+      actName: this.getActMasterDisplayName(item.actId),
     };
   }
 
@@ -339,6 +383,73 @@ export class ActSectionDtlsListing implements OnInit {
     );
   }
 
+  private normalizeActMastersResponse(response: unknown): ActMasterOption[] {
+    if (Array.isArray(response)) {
+      return response.filter((item): item is ActMasterOption => this.isActMasterOption(item));
+    }
+
+    if (response && typeof response === 'object') {
+      const candidate = response as Record<string, unknown>;
+      const data = candidate['data'];
+
+      if (Array.isArray(data)) {
+        return data.filter((item): item is ActMasterOption => this.isActMasterOption(item));
+      }
+    }
+
+    return [];
+  }
+
+  private isActMasterOption(value: unknown): value is ActMasterOption {
+    return Boolean(value && typeof value === 'object' && ('actName' in value || 'actId' in value || 'id' in value));
+  }
+
+  private getActMasterDisplayName(value: string | number | null | undefined): string {
+    const actId = this.resolveActMasterId(value);
+    const match = this.actMasterOptions.find((item) => (item.actId ?? item.id) === actId);
+
+    if (match?.actName?.trim()) {
+      return match.actName.trim();
+    }
+
+    return typeof value === 'string' && value.trim() ? value : '';
+  }
+
+  private resolveActMasterId(value: string | number | null | undefined): number | null {
+    if (typeof value === 'number') {
+      return value;
+    }
+
+    if (typeof value === 'string' && value.trim()) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
+  private getSectionKey(item: DisplayItem): string {
+    return [item.sectionId, item.actId, item.sectionNo, item.caseStudyId].map((value) => String(value ?? '')).join('|');
+  }
+
+  isFieldExpanded(item: DisplayItem, field: 'meaning' | 'objective' | 'illustration' | 'exception'): boolean {
+    const sectionKey = this.getSectionKey(item);
+    const sectionState = this.expandedFieldState[sectionKey];
+
+    if (!sectionState) {
+      return field === 'meaning';
+    }
+
+    return sectionState[field] ?? field === 'meaning';
+  }
+
+  toggleField(item: DisplayItem, field: 'meaning' | 'objective' | 'illustration' | 'exception'): void {
+    const sectionKey = this.getSectionKey(item);
+    const sectionState = this.expandedFieldState[sectionKey] ?? {};
+    sectionState[field] = !this.isFieldExpanded(item, field);
+    this.expandedFieldState[sectionKey] = sectionState;
+  }
+
   get filteredData(): DisplayItem[] {
     return this.actSectionDtlsList.filter((item) => {
       const sectionMatch = !this.searchSection || String(item.sectionNo).includes(this.searchSection);
@@ -348,10 +459,10 @@ export class ActSectionDtlsListing implements OnInit {
       const baillableMatch = !this.searchBailable || item.exception.toLowerCase().includes(this.searchBailable.toLowerCase());
       const courtMatch = !this.searchCourt || item.chapterName.toLowerCase().includes(this.searchCourt.toLowerCase());
       const illustrationMatch = !this.searchIllustration || item.illustration.toLowerCase().includes(this.searchIllustration.toLowerCase());
-      const actIdMatch = !this.searchActId || String(item.actId).includes(this.searchActId);
+      const actNameMatch = !this.searchActName || (item.actName ?? '').toLowerCase().includes(this.searchActName.toLowerCase()) || String(item.actId).includes(this.searchActName);
       const caseStudyMatch = !this.searchCaseStudyId || String(item.caseStudyId).includes(this.searchCaseStudyId);
 
-      return sectionMatch && offenceMatch && punishmentMatch && cognizableMatch && baillableMatch && courtMatch && illustrationMatch && actIdMatch && caseStudyMatch;
+      return sectionMatch && offenceMatch && punishmentMatch && cognizableMatch && baillableMatch && courtMatch && illustrationMatch && actNameMatch && caseStudyMatch;
     });
   }
 }

@@ -320,18 +320,23 @@ export class ActSectionsDtls implements OnInit {
   }
 
   private buildPayload(): ActSectionDtlsPayload {
-    return {
-      sectionId: this.editingActSectionDtlsId ?? this.resolveActMasterId(this.sectionId) ?? 0,
-      actId: this.resolveActMasterId(this.actId) ?? 0,
-      sectionNo: this.resolveActMasterId(this.sectionNo) ?? 0,
+    const payload: ActSectionDtlsPayload = {
+      actId: typeof this.actId === 'number' ? this.actId : this.resolveActMasterId(this.actId) ?? 0,
+      sectionNo: typeof this.sectionNo === 'number' ? this.sectionNo : this.resolveActMasterId(this.sectionNo) ?? 0,
       chapterName: this.chapterName.trim(),
       bareAct: this.bareAct.trim(),
       meaning: this.meaning.trim(),
       objective: this.objective.trim(),
       illustration: this.illustration.trim(),
       exception: this.exception.trim(),
-      caseStudyId: this.resolveActMasterId(this.caseStudyId) ?? 0,
+      caseStudyId: typeof this.caseStudyId === 'number' ? this.caseStudyId : this.resolveActMasterId(this.caseStudyId) ?? 0,
     };
+
+    if (this.editingActSectionDtlsId) {
+      payload.sectionDtlId = this.editingActSectionDtlsId;
+    }
+
+    return payload;
   }
 
   private loadActMasters(): void {
