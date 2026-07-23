@@ -18,7 +18,7 @@ import  { ActListing } from './act-listing/act-listing';
 import { ActDetailsListing } from './act-details-listing/act-details-listing';
 import { ActSectionsDtls } from './act-sections-dtls/act-sections-dtls';
 import { ActSectionDtlsListing } from './act-section-dtls-listing/act-section-dtls-listing';
-
+import { LegalCaseStudies } from './legalcasestudies/legalcasestudies';
 
 
 
@@ -62,6 +62,11 @@ export const routes: Routes = [
     {
         component: LegalCategory,
         path:'legal-category',
+        canActivate: [AuthGuard]
+    },
+    {
+        component: LegalCaseStudies,
+        path:'legal-case-studies',
         canActivate: [AuthGuard]
     },
     {
