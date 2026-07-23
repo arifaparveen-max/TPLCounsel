@@ -26,6 +26,7 @@ interface ActMasterOption {
 }
 
 interface DisplayItem extends ActSectionDtl {
+meaningSafe: SafeHtml;
   objectiveSafe: SafeHtml;
   illustrationSafe: SafeHtml;
   exceptionSafe: SafeHtml;
@@ -368,6 +369,7 @@ export class ActSectionDtlsListing implements OnInit {
   private createDisplayItem(item: ActSectionDtl): DisplayItem {
     return {
       ...item,
+      meaningSafe: this.sanitizer.bypassSecurityTrustHtml(item.meaning),
       objectiveSafe: this.sanitizer.bypassSecurityTrustHtml(item.objective),
       illustrationSafe: this.sanitizer.bypassSecurityTrustHtml(item.illustration),
       exceptionSafe: this.sanitizer.bypassSecurityTrustHtml(item.exception),

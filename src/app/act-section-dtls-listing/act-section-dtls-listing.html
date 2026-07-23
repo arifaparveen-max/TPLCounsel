@@ -122,7 +122,7 @@
                   <span class="toggle-text">{{ isFieldExpanded(item, 'meaning') ? 'Collapse' : 'Expand' }}</span>
                 </button>
                 <div class="field-content" *ngIf="isFieldExpanded(item, 'meaning')">
-                  <div class="field-value" [innerHTML]="item.meaning"></div>
+                  <div class="field-value" [innerHTML]="item.meaningSafe"></div>
                 </div>
               </div>
 
