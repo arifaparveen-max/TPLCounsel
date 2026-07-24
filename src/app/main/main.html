@@ -294,7 +294,7 @@
 <div class="testimonial">
     <div class="container">
         <div class="section-header">
-            <h2>Review From Client</h2>
+            <h2>Legal Case Review</h2>
         </div>
 
         <owl-carousel-o [options]="testimonialOptions" class="testimonials-carousel">
@@ -303,15 +303,19 @@
                 <div class="testimonial-item">
                     <i class="fa fa-quote-right"></i>
                     <div class="row align-items-center">
-                        <div class="col-3">
+
+                        <div class="col-12">
                             <img [src]="item.image" alt="Client">
                         </div>
-                        <div class="col-9">
+                        <div class="col-12">
                             <h2>{{ item.name }}</h2>
-                            <p>{{ item.profession }}</p>
+                            <!-- <p>{{ item.profession }}</p> -->
                         </div>
                         <div class="col-12">
-                            <p>{{ item.review }}</p>
+                            <p style="text-align: justify;">{{ item.review }}</p>
+                        </div>
+                        <div class="col-12">
+                            <a class="btn" href="" style="color: white;border: 1px solid white;">Learn More</a>
                         </div>
                     </div>
                 </div>

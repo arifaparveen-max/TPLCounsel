@@ -1,0 +1,26 @@
+<section class="case-study-section">
+  <div class="container">
+    <div class="section-header text-center mb-4">
+      <h2>Case Studies</h2>
+      <p>Selected legal judgments and insights from our practice.</p>
+    </div>
+
+    <div *ngIf="isLoading" class="text-center py-4">Loading case studies...</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <owl-carousel-o *ngIf="!isLoading && caseStudies.length" [options]="testimonialOptions" class="testimonials-carousel">
+      <ng-template carouselSlide *ngFor="let item of caseStudies">
+        <div class="case-study-card">
+          <img class="case-study-image" [src]="getImageUrl(item)" [alt]="getCaseTitle(item)">
+          <div class="case-study-body">
+            <h4 class="case-study-title">{{ getCaseTitle(item) }}</h4>
+            <div class="case-study-subtitle">{{ item.caseTitleAndCitation }}</div>
+            <p class="case-study-text facts-preview">{{ getFactsPreview(item) }}</p>
+            <p class="case-study-text conclusion-preview">{{ getConclusionPreview(item) }}</p>
+            <a class="details-btn" [routerLink]="['/casestudy']" [queryParams]="{ id: item.id }">More Details</a>
+          </div>
+        </div>
+      </ng-template>
+    </owl-carousel-o>
+  </div>
+</section>

@@ -1,1 +1,107 @@
-<p>casestudy works!</p>
+<section class="case-detail-page">
+  <div class="container">
+    <div *ngIf="isLoading" class="text-center py-4">Loading case details...</div>
+    <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+    <div *ngIf="caseStudies.length || caseStudy" class="case-shell">
+      <aside class="case-menu">        
+        <div class="case-menu-list">
+          <button
+            type="button"
+            class="case-menu-btn"
+            *ngFor="let item of caseStudies"
+            [class.active]="caseStudy?.id === item.id"
+            (click)="selectCaseStudy(item)">
+            {{ item.caseName || item.caseTitleAndCitation || 'Case Study' }}
+          </button>
+        </div>
+      </aside>
+
+      <div *ngIf="caseStudy" class="case-details">
+        <img *ngIf="caseStudy.imagePath" class="case-image" [src]="getImageUrl(caseStudy)" [alt]="caseStudy.caseName || caseStudy.caseTitleAndCitation">
+
+        <h2>{{ caseStudy.caseName || caseStudy.caseTitleAndCitation || 'Case Study' }}</h2>
+       
+        <div class="detail-section" *ngIf="caseStudy.caseTitleAndCitation">
+          <button type="button" class="detail-header" (click)="toggleSection('caseTitleAndCitation')">
+            <span>Case Title and Citation</span>
+            <span>{{ expandedSections['caseTitleAndCitation'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['caseTitleAndCitation']" [innerHTML]="caseStudy.caseTitleAndCitation"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.factsOfTheCase">
+          <button type="button" class="detail-header" (click)="toggleSection('factsOfTheCase')">
+            <span>Facts of the Case</span>
+            <span>{{ expandedSections['factsOfTheCase'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['factsOfTheCase']" [innerHTML]="caseStudy.factsOfTheCase"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.proceduralHistory">
+          <button type="button" class="detail-header" (click)="toggleSection('proceduralHistory')">
+            <span>Procedural History</span>
+            <span>{{ expandedSections['proceduralHistory'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['proceduralHistory']" [innerHTML]="caseStudy.proceduralHistory"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.legalIssues">
+          <button type="button" class="detail-header" (click)="toggleSection('legalIssues')">
+            <span>Legal Issues</span>
+            <span>{{ expandedSections['legalIssues'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['legalIssues']" [innerHTML]="caseStudy.legalIssues"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.argumentsOfTheParties">
+          <button type="button" class="detail-header" (click)="toggleSection('argumentsOfTheParties')">
+            <span>Arguments of the Parties</span>
+            <span>{{ expandedSections['argumentsOfTheParties'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['argumentsOfTheParties']" [innerHTML]="caseStudy.argumentsOfTheParties"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.relevantLaw">
+          <button type="button" class="detail-header" (click)="toggleSection('relevantLaw')">
+            <span>Relevant Law</span>
+            <span>{{ expandedSections['relevantLaw'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['relevantLaw']" [innerHTML]="caseStudy.relevantLaw"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.courtsAnalysis">
+          <button type="button" class="detail-header" (click)="toggleSection('courtsAnalysis')">
+            <span>Court's Analysis</span>
+            <span>{{ expandedSections['courtsAnalysis'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['courtsAnalysis']" [innerHTML]="caseStudy.courtsAnalysis"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.impactOfTheJudgment">
+          <button type="button" class="detail-header" (click)="toggleSection('impactOfTheJudgment')">
+            <span>Impact of the Judgment</span>
+            <span>{{ expandedSections['impactOfTheJudgment'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['impactOfTheJudgment']" [innerHTML]="caseStudy.impactOfTheJudgment"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.conclusion">
+          <button type="button" class="detail-header" (click)="toggleSection('conclusion')">
+            <span>Conclusion</span>
+            <span>{{ expandedSections['conclusion'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['conclusion']" [innerHTML]="caseStudy.conclusion"></div>
+        </div>
+
+        <div class="detail-section" *ngIf="caseStudy.references">
+          <button type="button" class="detail-header" (click)="toggleSection('references')">
+            <span>References</span>
+            <span>{{ expandedSections['references'] ? '−' : '+' }}</span>
+          </button>
+          <div class="detail-body" *ngIf="expandedSections['references']" [innerHTML]="caseStudy.references"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
