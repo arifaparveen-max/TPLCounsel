@@ -8,6 +8,16 @@
     <h3>{{ editingCaseStudyId ? 'Edit Legal Case Study' : 'Add Legal Case Study' }}</h3>
     <form #caseStudyForm="ngForm" (ngSubmit)="submitForm()">
       <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label">Case Name</label>
+          <input class="form-control" [(ngModel)]="caseName" name="caseName" placeholder="Enter case name">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label">Case Image</label>
+          <input class="form-control" type="file" accept="image/*" (change)="onImageSelected($event)">
+          <div class="form-text" *ngIf="imagePath">Selected file: {{ imagePath }}</div>
+        </div>
+
         <div class="col-md-12" *ngFor="let field of editorFields">
           <label class="form-label">{{ field.label }}</label>
           <div class="editor-toolbar">
@@ -54,6 +64,7 @@
         <thead>
           <tr>
             <th>ID</th>
+            <th>Case Name</th>
             <th>Title</th>
             <th>Preview</th>
             <th>Actions</th>
@@ -62,6 +73,7 @@
         <tbody>
           <tr *ngFor="let item of filteredCaseStudies">
             <td>{{ item.id }}</td>
+            <td>{{ item.caseName || '—' }}</td>
             <td>{{ getCaseStudyTitle(item) }}</td>
             <td>{{ getCaseStudyPreview(item) }}</td>
             <td>
@@ -70,7 +82,7 @@
             </td>
           </tr>
           <tr *ngIf="!isLoading && caseStudies.length === 0">
-            <td colspan="3" class="text-center text-muted">No legal case studies available yet.</td>
+            <td colspan="5" class="text-center text-muted">No legal case studies available yet.</td>
           </tr>
         </tbody>
       </table>

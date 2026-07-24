@@ -3,6 +3,8 @@ import { Header } from './header/header';
 import { MatToolbar } from "@angular/material/toolbar";
 import { Main } from "./main/main";
 import { RouterOutlet } from "@angular/router";
+import { provideAnimations } from '@angular/platform-browser/animations';
+
 
 @Component({
   selector: 'app-root',

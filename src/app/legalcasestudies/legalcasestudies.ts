@@ -8,6 +8,9 @@ import { environment } from '../../environments/environment';
 
 interface LegalCaseStudyPayload {
   id?: number;
+  caseName?: string | null;
+  imagePath?: string | null;
+  caseImage?: string | null;
   caseTitleAndCitation?: string | null;
   factsOfTheCase?: string | null;
   proceduralHistory?: string | null;
@@ -147,6 +150,9 @@ export class LegalCaseStudies implements OnInit {
   editingCaseStudyId: number | null = null;
   activeEditor: EditableField = 'caseTitleAndCitation';
 
+  caseName = '';
+  imagePath = '';
+  selectedCaseImageFile: File | null = null;
   caseTitleAndCitation = '';
   factsOfTheCase = '';
   proceduralHistory = '';
@@ -191,16 +197,16 @@ export class LegalCaseStudies implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    if (!this.caseTitleAndCitation.trim() || !this.factsOfTheCase.trim() || !this.legalIssues.trim() || !this.argumentsOfTheParties.trim() || !this.relevantLaw.trim() || !this.courtsAnalysis.trim() || !this.judgment_Holding.trim() || !this.criticalAnalysis.trim() || !this.impactOfTheJudgment.trim() || !this.conclusion.trim() || !this.references.trim()) {
+    if (!this.caseName.trim() || !this.caseTitleAndCitation.trim() || !this.factsOfTheCase.trim() || !this.legalIssues.trim() || !this.argumentsOfTheParties.trim() || !this.relevantLaw.trim() || !this.courtsAnalysis.trim() || !this.judgment_Holding.trim() || !this.criticalAnalysis.trim() || !this.impactOfTheJudgment.trim() || !this.conclusion.trim() || !this.references.trim()) {
       this.errorMessage = 'Please fill in all required fields.';
       return;
     }
 
     this.isSubmitting = true;
-    const payload = this.buildPayload();
+    const formData = this.buildFormData();
     const request$ = this.editingCaseStudyId
-      ? this.http.put(`${this.legalCaseStudiesApiUrl}/${this.editingCaseStudyId}`, payload, { headers: this.getAuthHeaders() })
-      : this.http.post(this.legalCaseStudiesApiUrl, payload, { headers: this.getAuthHeaders() });
+      ? this.http.put(`${this.legalCaseStudiesApiUrl}/${this.editingCaseStudyId}`, formData, { headers: this.getAuthHeaders('form-data') })
+      : this.http.post(this.legalCaseStudiesApiUrl, formData, { headers: this.getAuthHeaders('form-data') });
 
     request$.pipe(
       finalize(() => {
@@ -227,6 +233,9 @@ export class LegalCaseStudies implements OnInit {
     }
 
     this.editingCaseStudyId = id;
+    this.caseName = item.caseName ?? '';
+    this.imagePath = item.imagePath ?? '';
+    this.selectedCaseImageFile = null;
     this.caseTitleAndCitation = item.caseTitleAndCitation ?? '';
     this.factsOfTheCase = item.factsOfTheCase ?? '';
     this.proceduralHistory = item.proceduralHistory ?? '';
@@ -282,6 +291,18 @@ export class LegalCaseStudies implements OnInit {
     this.resetForm();
   }
 
+  onImageSelected(event: Event): void {
+    const target = event.target as HTMLInputElement | null;
+    const file = target?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    this.selectedCaseImageFile = file;
+    this.imagePath = file.name;
+  }
+
   focusEditor(field: EditableField): void {
     this.activeEditor = field;
     setTimeout(() => {
@@ -311,6 +332,7 @@ export class LegalCaseStudies implements OnInit {
 
     return this.caseStudies.filter((item) => {
       const searchableText = [
+        item.caseName,
         item.caseTitleAndCitation,
         item.factsOfTheCase,
         item.proceduralHistory,
@@ -333,32 +355,43 @@ export class LegalCaseStudies implements OnInit {
   }
 
   getCaseStudyTitle(item: LegalCaseStudyPayload): string {
-    return this.toPlainText(item.caseTitleAndCitation) || 'Untitled case';
+    return this.toPlainText(item.caseName) || this.toPlainText(item.caseTitleAndCitation) || 'Untitled case';
   }
 
   getCaseStudyPreview(item: LegalCaseStudyPayload): string {
-    const previewSource = this.toPlainText(item.factsOfTheCase) || this.toPlainText(item.legalIssues) || this.toPlainText(item.caseTitleAndCitation);
+    const previewSource = this.toPlainText(item.factsOfTheCase) || this.toPlainText(item.legalIssues) || this.toPlainText(item.caseName) || this.toPlainText(item.caseTitleAndCitation);
     const preview = previewSource.replace(/\s+/g, ' ').trim();
     return preview.length > 120 ? `${preview.substring(0, 120)}...` : preview;
   }
 
-  private buildPayload(): LegalCaseStudyPayload {
-    return {
-      caseTitleAndCitation: this.caseTitleAndCitation.trim(),
-      factsOfTheCase: this.factsOfTheCase.trim(),
-      proceduralHistory: this.proceduralHistory.trim(),
-      legalIssues: this.legalIssues.trim(),
-      argumentsOfTheParties: this.argumentsOfTheParties.trim(),
-      relevantLaw: this.relevantLaw.trim(),
-      courtsAnalysis: this.courtsAnalysis.trim(),
-      judgment_Holding: this.judgment_Holding.trim(),
-      criticalAnalysis: this.criticalAnalysis.trim(),
-      impactOfTheJudgment: this.impactOfTheJudgment.trim(),
-      conclusion: this.conclusion.trim(),
-      references: this.references.trim(),
-      updatedOn: new Date().toISOString(),
-      ...(this.editingCaseStudyId ? { id: this.editingCaseStudyId } : {}),
-    };
+  private buildFormData(): FormData {
+    const formData = new FormData();
+
+    if (this.editingCaseStudyId != null) {
+      formData.append('id', String(this.editingCaseStudyId));
+    }
+
+    formData.append('caseName', this.caseName.trim());
+    formData.append('imagePath', this.imagePath.trim() || (this.selectedCaseImageFile ? this.selectedCaseImageFile.name : ''));
+    formData.append('caseTitleAndCitation', this.caseTitleAndCitation.trim());
+    formData.append('factsOfTheCase', this.factsOfTheCase.trim());
+    formData.append('proceduralHistory', this.proceduralHistory.trim());
+    formData.append('legalIssues', this.legalIssues.trim());
+    formData.append('argumentsOfTheParties', this.argumentsOfTheParties.trim());
+    formData.append('relevantLaw', this.relevantLaw.trim());
+    formData.append('courtsAnalysis', this.courtsAnalysis.trim());
+    formData.append('judgment_Holding', this.judgment_Holding.trim());
+    formData.append('criticalAnalysis', this.criticalAnalysis.trim());
+    formData.append('impactOfTheJudgment', this.impactOfTheJudgment.trim());
+    formData.append('conclusion', this.conclusion.trim());
+    formData.append('references', this.references.trim());
+    formData.append('updatedOn', new Date().toISOString());
+
+    if (this.selectedCaseImageFile) {
+      formData.append('caseImage', this.selectedCaseImageFile, this.selectedCaseImageFile.name);
+    }
+
+    return formData;
   }
 
   private loadCaseStudies(): void {
@@ -381,6 +414,9 @@ export class LegalCaseStudies implements OnInit {
 
   private resetForm(): void {
     this.editingCaseStudyId = null;
+    this.caseName = '';
+    this.imagePath = '';
+    this.selectedCaseImageFile = null;
     this.caseTitleAndCitation = '';
     this.factsOfTheCase = '';
     this.proceduralHistory = '';
@@ -441,11 +477,18 @@ export class LegalCaseStudies implements OnInit {
       .trim();
   }
 
-  private getAuthHeaders(): HttpHeaders {
+  private getAuthHeaders(type: 'json' | 'form-data' = 'json'): HttpHeaders {
     const token = this.authService.getBearerToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    });
+    const headers: Record<string, string> = {};
+
+    if (type === 'json') {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return new HttpHeaders(headers);
   }
 }
