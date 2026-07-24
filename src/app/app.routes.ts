@@ -106,6 +106,10 @@ export const routes: Routes = [
         component:ActSectionDtlsListing,
         path:'act-section-dtls-listing'
     },
+    {
+        component:ActSectionDtlsListing,
+        path:'act-section-dtls-listing/:id'
+    },
      {
         component:Casestudy,
         path:'case-study'

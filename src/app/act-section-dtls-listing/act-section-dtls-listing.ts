@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { finalize, switchMap } from 'rxjs/operators';
 
@@ -294,6 +295,35 @@ meaningSafe: SafeHtml;
       margin-bottom: 16px;
       border-left: 4px solid #c62828;
     }
+
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .page-size-select {
+      min-width: 90px;
+      border: 1px solid #aa9166;
+      color: #121518;
+      border-radius: 8px;
+      padding: 6px 8px;
+      background: #fff;
+    }
+
+    .pagination .page-link {
+      color: #121518;
+      border-color: #aa9166;
+    }
+
+    .pagination .page-item.active .page-link {
+      background-color: #aa9166;
+      border-color: #aa9166;
+      color: #fff;
+    }
   `,
 })
 export class ActSectionDtlsListing implements OnInit {
@@ -311,6 +341,10 @@ export class ActSectionDtlsListing implements OnInit {
   searchIllustration = '';
   searchActName = '';
   searchCaseStudyId = '';
+  selectedActId: number | null = null;
+  currentPage = 1;
+  pageSize = 10;
+  readonly pageSizeOptions = [10, 20, 30, 40, 50];
 
   private readonly apiUrl = 'https://employeesapi.runasp.net/api/ActSectionDtls';
   private readonly actMasterApiUrl = 'https://employeesapi.runasp.net/api/ActMasters';
@@ -320,10 +354,17 @@ export class ActSectionDtlsListing implements OnInit {
     private http: HttpClient,
     private authService: AuthService,
     private sanitizer: DomSanitizer,
+    private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      const actId = id ? Number(id) : null;
+      this.selectedActId = Number.isFinite(actId) && actId !== null ? actId : null;
+      this.loadData();
+    });
   }
 
   private loadData(): void {
@@ -407,7 +448,7 @@ export class ActSectionDtlsListing implements OnInit {
   }
 
   private getActMasterDisplayName(value: string | number | null | undefined): string {
-    const actId = this.resolveActMasterId(value);
+    const actId = value;//this.resolveActMasterId(value);
     const match = this.actMasterOptions.find((item) => (item.actId ?? item.id) === actId);
 
     if (match?.actName?.trim()) {
@@ -454,6 +495,7 @@ export class ActSectionDtlsListing implements OnInit {
 
   get filteredData(): DisplayItem[] {
     return this.actSectionDtlsList.filter((item) => {
+      const actFilterMatch = this.selectedActId === null || this.getActId(item) === this.selectedActId;
       const sectionMatch = !this.searchSection || String(item.sectionNo).includes(this.searchSection);
       const offenceMatch = !this.searchOffence || item.bareAct.toLowerCase().includes(this.searchOffence.toLowerCase());
       const punishmentMatch = !this.searchPunishment || item.objective.toLowerCase().includes(this.searchPunishment.toLowerCase());
@@ -464,7 +506,69 @@ export class ActSectionDtlsListing implements OnInit {
       const actNameMatch = !this.searchActName || (item.actName ?? '').toLowerCase().includes(this.searchActName.toLowerCase()) || String(item.actId).includes(this.searchActName);
       const caseStudyMatch = !this.searchCaseStudyId || String(item.caseStudyId).includes(this.searchCaseStudyId);
 
-      return sectionMatch && offenceMatch && punishmentMatch && cognizableMatch && baillableMatch && courtMatch && illustrationMatch && actNameMatch && caseStudyMatch;
+      return actFilterMatch && sectionMatch && offenceMatch && punishmentMatch && cognizableMatch && baillableMatch && courtMatch && illustrationMatch && actNameMatch && caseStudyMatch;
     });
+  }
+
+  get paginatedData(): DisplayItem[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredData.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredData.length / this.pageSize));
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 1;
+  }
+
+  onPageSizeChange(value: string | number): void {
+    const parsedValue = Number(value);
+    if (Number.isFinite(parsedValue) && parsedValue > 0) {
+      this.pageSize = parsedValue;
+      this.currentPage = 1;
+    }
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) {
+      return;
+    }
+
+    this.currentPage = page;
+  }
+
+  goToPreviousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage -= 1;
+    }
+  }
+
+  goToNextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage += 1;
+    }
+  }
+
+  goBack(): void {
+    this.router.navigate(['/acts']);
+  }
+
+  private getActId(item: DisplayItem): number | null {
+    if (typeof item.actId === 'number') {
+      return item.actId;
+    }
+
+    if (typeof item.actId === 'string' && item.actId.trim()) {
+      const parsed = Number(item.actId);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    return null;
   }
 }

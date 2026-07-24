@@ -1,5 +1,10 @@
 <div class="section-listing">
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+  <div class="mb-3">
+    <a class="btn btn-outline-secondary" href="javascript:void(0)" (click)="goBack()">
+      <i class="fa fa-arrow-left"></i> Back to Acts
+    </a>
+  </div>
+
 
   <div class="search-container">
     
@@ -8,6 +13,7 @@
       <input
         type="text"
         [(ngModel)]="searchActName"
+        (ngModelChange)="onFilterChange()"
         placeholder="Search act name"
         class="form-control"
       />
@@ -18,6 +24,7 @@
       <input
         type="text"
         [(ngModel)]="searchSection"
+        (ngModelChange)="onFilterChange()"
         placeholder="Search section no"
         class="form-control"
       />
@@ -28,6 +35,7 @@
       <input
         type="text"
         [(ngModel)]="searchCourt"
+        (ngModelChange)="onFilterChange()"
         placeholder="Search chapter"
         class="form-control"
       />
@@ -88,6 +96,7 @@
       <input
         type="text"
         [(ngModel)]="searchCaseStudyId"
+        (ngModelChange)="onFilterChange()"
         placeholder="Search case study id"
         class="form-control"
       />
@@ -110,7 +119,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of filteredData">           
+          <tr *ngFor="let item of paginatedData">           
             <td>{{ item.actName || item.actId }}</td>
             <td>{{ item.sectionNo }}</td>
             <td>{{ item.chapterName }}</td>
@@ -160,6 +169,30 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
+    <div *ngIf="filteredData.length > 0" class="pagination-bar">
+      <div class="d-flex align-items-center gap-2">
+        <label class="mb-0 text-muted">Show</label>
+        <select class="page-size-select" [ngModel]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+          <option *ngFor="let size of pageSizeOptions" [value]="size">{{ size }}</option>
+        </select>
+        <span class="text-muted">records</span>
+      </div>
+
+      <div class="pagination-nav" *ngIf="totalPages > 1">
+        <ul class="pagination mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPreviousPage()">Previous</a>
+          </li>
+          <li *ngFor="let page of pageNumbers" class="page-item" [class.active]="page === currentPage">
+            <a class="page-link" href="javascript:void(0)" (click)="goToPage(page)">{{ page }}</a>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <a class="page-link" href="javascript:void(0)" (click)="goToNextPage()">Next</a>
+          </li>
+        </ul>
+      </div>
     </div>
 
     <ng-template #noData>

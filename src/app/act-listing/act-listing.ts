@@ -132,11 +132,11 @@ export class ActListing implements OnInit {
   selectAct(act: ActListingItem): void {
     const actId = act.actId ?? act.id;
     if (actId) {
-      this.router.navigate(['/act-details-listing', actId]);
+      this.router.navigate(['/act-section-dtls-listing', actId]);
       return;
     }
 
-    this.router.navigate(['/act-details-listing']);
+    this.router.navigate(['/act-section-dtls-listing']);
   }
 
   getFormattedDate(value?: string | null): string {
