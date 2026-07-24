@@ -303,7 +303,7 @@ export class ActDetailsListing implements OnInit {
     ).subscribe({
       next: (response) => {
         this.allDetails = this.normalizeDetails(response);
-        this.currentActName = this.resolveActName();
+        //this.currentActName = this.resolveActName();
       },
       error: () => {
         this.errorMessage = 'Unable to load act details at the moment.';

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { finalize, switchMap } from 'rxjs/operators';
+import { Footer } from "../footer/footer";
 
 interface ActSectionDtl {
   sectionId: string | number;
@@ -36,7 +37,7 @@ meaningSafe: SafeHtml;
 
 @Component({
   selector: 'app-act-section-dtls-listing',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Footer],
   templateUrl: './act-section-dtls-listing.html',
   styles: `
     .section-listing {
@@ -356,6 +357,7 @@ export class ActSectionDtlsListing implements OnInit {
     private sanitizer: DomSanitizer,
     private route: ActivatedRoute,
     private router: Router,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -378,6 +380,7 @@ export class ActSectionDtlsListing implements OnInit {
       }),
       finalize(() => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       }),
     ).subscribe({
       next: (response) => {
