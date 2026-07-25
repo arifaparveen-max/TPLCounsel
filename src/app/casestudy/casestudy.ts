@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment';
 
@@ -136,7 +136,7 @@ export class Casestudy implements OnInit {
   errorMessage = '';
   expandedSections: Record<string, boolean> = {};
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {}
+  constructor(private route: ActivatedRoute, private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadCaseStudies();
@@ -180,6 +180,7 @@ export class Casestudy implements OnInit {
       },
       complete: () => {
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
     });
   }
