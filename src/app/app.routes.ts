@@ -19,6 +19,8 @@ import { ActDetailsListing } from './act-details-listing/act-details-listing';
 import { ActSectionsDtls } from './act-sections-dtls/act-sections-dtls';
 import { ActSectionDtlsListing } from './act-section-dtls-listing/act-section-dtls-listing';
 import { LegalCaseStudies } from './legalcasestudies/legalcasestudies';
+import { TermsOfUse } from './terms-of-use/terms-of-use';
+import { PrivacyPolicy } from './privacy-policy/privacy-policy';
 
 
 
@@ -74,6 +76,14 @@ export const routes: Routes = [
         path:'contact'
     },
     {
+        component: TermsOfUse,
+        path:'terms-of-use'
+    },
+    {
+        component: PrivacyPolicy,
+        path:'privacy-policy'
+    },
+    {
         component: Register,
         path:'register'
     },
@@ -113,6 +123,14 @@ export const routes: Routes = [
      {
         component:Casestudy,
         path:'case-study'
+    },
+     {
+        component:TermsOfUse,
+        path:'terms-of-use'
+    },
+     {
+        component:PrivacyPolicy,
+        path:'privacy-policy'
     }
 
 ];

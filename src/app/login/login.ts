@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { finalize } from 'rxjs/operators';
+import { Footer } from "../footer/footer";
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, Footer],
   templateUrl: './login.html',
   styles: `
     .auth-page {

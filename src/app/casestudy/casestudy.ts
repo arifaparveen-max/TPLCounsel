@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { Footer } from '../footer/footer';
 
 interface LegalCaseStudyDetail {
   id?: number;
@@ -24,7 +25,7 @@ interface LegalCaseStudyDetail {
 
 @Component({
   selector: 'app-casestudy',
-  imports: [CommonModule],
+  imports: [Footer,CommonModule],
   templateUrl: './casestudy.html',
   styles: `
     .case-detail-page {
