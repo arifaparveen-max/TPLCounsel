@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import {ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { Footer } from '../footer/footer';
 
@@ -25,7 +26,7 @@ interface LegalCaseStudyDetail {
 
 @Component({
   selector: 'app-casestudy',
-  imports: [Footer,CommonModule],
+  imports: [Footer, CommonModule, RouterLink],
   templateUrl: './casestudy.html',
   styles: `
     .case-detail-page {
@@ -136,16 +137,35 @@ export class Casestudy implements OnInit {
   isLoading = false;
   errorMessage = '';
   expandedSections: Record<string, boolean> = {};
+  private pendingRouteId: string | null = null;
 
-  constructor(private route: ActivatedRoute, private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private meta: Meta,
+    private titleService: Title
+  ) {}
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe((params) => {
+      this.pendingRouteId = params.get('id');
+      this.syncSelectedCaseStudy(this.pendingRouteId ?? this.route.snapshot.queryParamMap.get('id'));
+    });
+
     this.loadCaseStudies();
   }
 
   selectCaseStudy(item: LegalCaseStudyDetail): void {
     this.caseStudy = item;
     this.expandedSections = {};
+
+    if (item.id != null) {
+      this.router.navigate(['/case-study', item.id]);
+    } else {
+      this.router.navigate(['/case-study']);
+    }
   }
 
   getImageUrl(item?: LegalCaseStudyDetail | null): string {
@@ -172,9 +192,7 @@ export class Casestudy implements OnInit {
     this.http.get<unknown>(`${environment.baseUrl}/LegalCaseStudies`).subscribe({
       next: (response) => {
         this.caseStudies = this.normalizeResponse(response);
-        const selectedId = this.route.snapshot.queryParamMap.get('id');
-        const initialCase = this.caseStudies.find((item) => String(item.id) === selectedId) ?? this.caseStudies[0] ?? null;
-        this.caseStudy = initialCase;
+        this.syncSelectedCaseStudy(this.pendingRouteId ?? this.route.snapshot.queryParamMap.get('id'));
       },
       error: () => {
         this.errorMessage = 'Unable to load case studies.';
@@ -184,6 +202,69 @@ export class Casestudy implements OnInit {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  private syncSelectedCaseStudy(selectedId: string | null): void {
+    if (!this.caseStudies.length) {
+      this.caseStudy = null;
+      this.resetMetaTags();
+      return;
+    }
+
+    const matchedCase = this.caseStudies.find((item) => String(item.id) === String(selectedId)) ?? this.caseStudies[0] ?? null;
+    this.caseStudy = matchedCase;
+    this.expandedSections = {};
+
+    if (matchedCase) {
+      this.updateMetaTags(matchedCase);
+    } else {
+      this.resetMetaTags();
+    }
+  }
+
+  private updateMetaTags(item: LegalCaseStudyDetail): void {
+    const title = this.toPlainText(item.caseName) || this.toPlainText(item.caseTitleAndCitation) || 'Case Study';
+    const description = this.toPlainText(item.factsOfTheCase) || this.toPlainText(item.conclusion) || 'Read the detailed case study and legal analysis.';
+    const imageUrl = this.getImageUrl(item);
+    const url = this.getCanonicalUrl(item.id);
+
+    this.titleService.setTitle(title);
+    this.meta.updateTag({ name: 'description', content: description });
+    this.meta.updateTag({ property: 'og:title', content: title });
+    this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:image', content: imageUrl });
+    this.meta.updateTag({ property: 'og:url', content: url });
+  }
+
+  private resetMetaTags(): void {
+    this.titleService.setTitle('Case Study');
+    this.meta.updateTag({ name: 'description', content: 'Case study details and legal analysis.' });
+    this.meta.updateTag({ property: 'og:title', content: 'Case Study' });
+    this.meta.updateTag({ property: 'og:description', content: 'Case study details and legal analysis.' });
+    this.meta.updateTag({ property: 'og:image', content: `${environment.imgURL}/default-case-study.jpg` });
+    this.meta.updateTag({ property: 'og:url', content: this.getBaseUrl('/case-study') });
+  }
+
+  private getCanonicalUrl(id?: number | null): string {
+    const path = id != null ? `/case-study/${id}` : '/case-study';
+    return this.getBaseUrl(path);
+  }
+
+  private getBaseUrl(path: string): string {
+    const origin = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://arifaparveen-max.github.io';
+    return `${origin}/TPLCounsel${path}`;
+  }
+
+  private toPlainText(value: string | null | undefined): string {
+    if (!value) {
+      return '';
+    }
+
+    return value
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   private normalizeResponse(response: unknown): LegalCaseStudyDetail[] {

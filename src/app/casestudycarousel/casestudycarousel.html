@@ -17,7 +17,7 @@
             <div class="case-study-subtitle">{{ item.caseTitleAndCitation }}</div>
             <p class="case-study-text facts-preview">{{ getFactsPreview(item) }}</p>
             <p class="case-study-text conclusion-preview">{{ getConclusionPreview(item) }}</p>
-            <a class="details-btn" [routerLink]="['/casestudy']" [queryParams]="{ id: item.id }">More Details</a>
+            <a class="details-btn" [routerLink]="item.id != null ? ['/case-study', item.id] : ['/case-study']">More Details</a>
           </div>
         </div>
       </ng-template>

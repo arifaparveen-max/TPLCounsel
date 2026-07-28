@@ -47,6 +47,10 @@ export const routes: Routes = [
         path:'casestudy'
     },
     {
+        component: Casestudy,
+        path:'casestudy/:id'
+    },
+    {
         component: Pages,
         path:'pages',
         canActivate: [AuthGuard]
@@ -123,6 +127,10 @@ export const routes: Routes = [
      {
         component:Casestudy,
         path:'case-study'
+    },
+     {
+        component:Casestudy,
+        path:'case-study/:id'
     },
      {
         component:TermsOfUse,

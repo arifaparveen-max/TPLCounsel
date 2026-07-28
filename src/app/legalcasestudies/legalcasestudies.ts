@@ -364,6 +364,25 @@ export class LegalCaseStudies implements OnInit {
     return preview.length > 120 ? `${preview.substring(0, 120)}...` : preview;
   }
 
+  shareOnFacebook(item: LegalCaseStudyPayload): void {
+    const title = this.toPlainText(item.caseName) || this.toPlainText(item.caseTitleAndCitation) || 'Legal Case Study';
+    const description = this.toPlainText(item.factsOfTheCase) || this.toPlainText(item.conclusion) || 'Read this legal case study on TPL Counsel.';
+    const shareUrl = this.buildFacebookShareUrl(title, description, item.id);
+    window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
+  }
+
+  private buildFacebookShareUrl(title: string, description: string, id?: number): string {
+    const encodedTitle = encodeURIComponent(title);
+    const encodedDescription = encodeURIComponent(description);
+    const encodedUrl = encodeURIComponent(this.getCaseStudyUrl(id));
+    return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}%20-%20${encodedDescription}`;
+  }
+
+  private getCaseStudyUrl(id?: number): string {
+    const baseUrl = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://arifaparveen-max.github.io';
+    return id != null ? `${baseUrl}/TPLCounsel/case-study/${id}` : `${baseUrl}/TPLCounsel/case-study`;
+  }
+
   private buildFormData(): FormData {
     const formData = new FormData();
 

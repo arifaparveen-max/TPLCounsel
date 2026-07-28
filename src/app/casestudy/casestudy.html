@@ -11,6 +11,7 @@
             class="case-menu-btn"
             *ngFor="let item of caseStudies"
             [class.active]="caseStudy?.id === item.id"
+            [routerLink]="item.id != null ? ['/case-study', item.id] : ['/case-study']"
             (click)="selectCaseStudy(item)">
             {{ item.caseName || item.caseTitleAndCitation || 'Case Study' }}
           </button>

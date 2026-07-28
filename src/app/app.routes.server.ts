@@ -12,6 +12,16 @@ export const serverRoutes: ServerRoute[] = [
     getPrerenderParams: async () => [{ id: '1' }],
   },
   {
+    path: 'casestudy/:id',
+    renderMode: RenderMode.Prerender,
+    getPrerenderParams: async () => [{ id: '1' }],
+  },
+  {
+    path: 'case-study/:id',
+    renderMode: RenderMode.Prerender,
+    getPrerenderParams: async () => [{ id: '1' }],
+  },
+  {
     path: '**',
     renderMode: RenderMode.Prerender,
   },
