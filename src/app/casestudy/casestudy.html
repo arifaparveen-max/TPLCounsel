@@ -4,7 +4,11 @@
     <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
 
     <div *ngIf="caseStudies.length || caseStudy" class="case-shell">
-      <aside class="case-menu">        
+      <aside class="case-menu">
+        <button type="button" class="facebook-share-btn" (click)="shareOnFacebook()">
+          Share on Facebook
+        </button>
+
         <div class="case-menu-list">
           <button
             type="button"

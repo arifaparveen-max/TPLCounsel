@@ -66,6 +66,25 @@ interface LegalCaseStudyDetail {
       margin-bottom: 20px;
     }
 
+    .facebook-share-btn {
+      width: 100%;
+      border: none;
+      border-radius: 999px;
+      background: #1877f2;
+      color: #fff;
+      font-weight: 700;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 18px rgba(24, 119, 242, 0.2);
+    }
+
+    .facebook-share-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(24, 119, 242, 0.28);
+    }
+
     .case-menu-list {
       display: flex;
       flex-direction: column;
@@ -185,6 +204,13 @@ export class Casestudy implements OnInit {
     this.expandedSections[key] = !this.expandedSections[key];
   }
 
+  shareOnFacebook(): void {
+    const shareUrl = this.getFacebookShareUrl();
+    if (typeof window !== 'undefined' && window.open) {
+      window.open(shareUrl, '_blank', 'width=600,height=500,noopener,noreferrer');
+    }
+  }
+
   private loadCaseStudies(): void {
     this.isLoading = true;
     this.errorMessage = '';
@@ -243,6 +269,11 @@ export class Casestudy implements OnInit {
     this.meta.updateTag({ property: 'og:description', content: 'Case study details and legal analysis.' });
     this.meta.updateTag({ property: 'og:image', content: `${environment.imgURL}/default-case-study.jpg` });
     this.meta.updateTag({ property: 'og:url', content: this.getBaseUrl('/case-study') });
+  }
+
+  private getFacebookShareUrl(): string {
+    const url = this.getCanonicalUrl(this.caseStudy?.id);
+    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
   }
 
   private getCanonicalUrl(id?: number | null): string {
