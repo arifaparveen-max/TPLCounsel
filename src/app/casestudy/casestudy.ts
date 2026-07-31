@@ -205,9 +205,12 @@ export class Casestudy implements OnInit {
   }
 
   shareOnFacebook(): void {
-    const shareUrl = this.getFacebookShareUrl();
+    const title = this.toPlainText(this.caseStudy?.caseName) || this.toPlainText(this.caseStudy?.caseTitleAndCitation) || 'Case Study';
+    const description = this.toPlainText(this.caseStudy?.factsOfTheCase) || this.toPlainText(this.caseStudy?.conclusion) || 'Read this legal case study on TPL Counsel.';
+    const shareUrl = this.buildFacebookShareUrl(title, description, this.caseStudy?.id);
+
     if (typeof window !== 'undefined' && window.open) {
-      window.open(shareUrl, '_blank', 'width=600,height=500,noopener,noreferrer');
+      window.open(shareUrl, '_blank', 'noopener,noreferrer,width=600,height=500');
     }
   }
 
@@ -271,9 +274,16 @@ export class Casestudy implements OnInit {
     this.meta.updateTag({ property: 'og:url', content: this.getBaseUrl('/case-study') });
   }
 
-  private getFacebookShareUrl(): string {
-    const url = this.getCanonicalUrl(this.caseStudy?.id);
-    return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  private buildFacebookShareUrl(title: string, description: string, id?: number | null): string {
+    const encodedTitle = encodeURIComponent(title);
+    const encodedDescription = encodeURIComponent(description);
+    const encodedUrl = encodeURIComponent(this.getCaseStudyUrl(id));
+    return `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}&quote=${encodedTitle}%20-%20${encodedDescription}`;
+  }
+
+  private getCaseStudyUrl(id?: number | null): string {
+    const baseUrl = typeof window !== 'undefined' && window.location?.origin ? window.location.origin : 'https://arifaparveen-max.github.io';
+    return id != null ? `${baseUrl}/TPLCounsel/case-study/${id}` : `${baseUrl}/TPLCounsel/case-study`;
   }
 
   private getCanonicalUrl(id?: number | null): string {
